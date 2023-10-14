@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Juego</title>
+    <style>
+      body {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <script type="module">
+      import * as THREE from "./three.module.js";
+      import { OrbitControls } from "./OrbitControls.js";
+      import { OBJLoader } from "./OBJLoader.js";
+
+      var x = 0,
+        y = 0,
+        z = 0;
+      //-----------------------------------------ESCENA Y CAMARA
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color("#34495E");
+
+      const camera = new THREE.PerspectiveCamera(
+        60,
+        window.innerWidth / window.innerHeight
+      );
+      camera.position.set(0, 10, 10);
+
+      const renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.shadowMap.enabled = true;
+      document.body.appendChild(renderer.domElement);
+
+      const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
+
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+      directionalLight.position.set(1, 5, -1);
+      directionalLight.castShadow = true;
+
+      scene.add(directionalLight, hemisphereLight);
+
+      const cameraControl = new OrbitControls(camera, renderer.domElement);
+
+      //---------------------------------------------------------------------------------MODELOS Y LOGICA
+
+      document.onkeydown = function (e) {
+        if (e.keyCode == 87) {
+          z -= 1;
+          console.log("x=", x, ",Y=", y, ",Z=", z);
+        }
+
+        if (e.keyCode == 83) {
+          z += 1;
+          console.log("x=", x, ",Y=", y, ",Z=", z);
+        }
+
+        if (e.keyCode == 68) {
+          x -= 1;
+          console.log("x=", x, ",Y=", y, ",Z=", z);
+        }
+
+        if (e.keyCode == 65) {
+          x += 1;
+          console.log("x=", x, ",Y=", y, ",Z=", z);
+        }
+      };
+
+      function animate() {
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+      }
+
+      const loader = new OBJLoader();
+      //Bañera
+      loader.load(
+        "./Modelos/BANERA/BAÑERA.obj",
+        function (BANERA) {
+          BANERA.position.set(0, 0, 0);
+          BANERA.scale.set(40, 40, 40);
+          scene.add(BANERA);
+        },
+        function (xhr) {
+          //console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+        },
+        function (error) {
+          //console.log("An error happened");
+        }
+      );
+
+      //BarcoJu
+      loader.load(
+        "./Modelos/BARCO_JUGUETE/J_BARCO.obj",
+        function (BarcoJu) {
+          BarcoJu.position.set(0, 0, 0);
+          BarcoJu.scale.set(5, 5, 5);
+          scene.add(BarcoJu);
+        },
+        function (xhr) {
+          //console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+        },
+        function (error) {
+          //console.log("An error happened");
+        }
+      );
+      
+      //BarcoPa
+      loader.load(
+        "./Modelos/BARCO_PAPEL/P_BARCO.obj",
+        function (BarcoPa) {
+          BarcoPa.position.set(0, 0, 50);
+          BarcoPa.scale.set(5, 5, 5);
+          scene.add(BarcoPa);
+        },
+        function (xhr) {
+          //console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+        },
+        function (error) {
+          //console.log("An error happened");
+        }
+      );
+      
+      //Bola_Blue
+      loader.load(
+        "./Modelos/BOLA_B/bola.obj",
+        function (Bola_Blue) {
+          Bola_Blue.position.set(30, 0, 0);
+          Bola_Blue.scale.set(5, 5, 5);
+          scene.add(Bola_Blue);
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+        },
+        function (error) {
+          console.log("An error happened");
+        }
+      );
+      animate();
+    </script>
+  </body>
+</html>
