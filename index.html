@@ -16,20 +16,61 @@
       import * as THREE from "./three.module.js";
       import { OrbitControls } from "./OrbitControls.js";
       import { OBJLoader } from "./OBJLoader.js";
+      import { MTLLoader } from "./MtLLoader.js";
 
-      var x = 0,
-        y = 0,
-        z = 0;
+      let duck1object;
+      var BarcoJu;
+      var camera;
+      var cameraControl;
+      var pivot;
       //-----------------------------------------ESCENA Y CAMARA
+
+      class CamaraTercerPersona {
+        constructor(params) {
+          this._params = params;
+          this._camera = params.camera;
+
+          this._currentPosition = new THREE.Vector3();
+          this._currentLookat = new THREE.Vector3();
+        }
+
+        _CalculateIdealOffset() {
+          const idealOffset = new THREE.Vector3(-15, 20, -30);
+          idealOffset.applyQuaternion(this._params.target.Rotation);
+          idealOffset.add(this._params.target.Position);
+          return idealOffset;
+        }
+
+        _CalculateIdealLookat() {
+          const idealLookat = new THREE.Vector3(0, 10, 50);
+          idealLookat.applyQuaternion(this._params.target.Rotation);
+          idealLookat.add(this._params.target.Position);
+          return idealLookat;
+        }
+        Update(timeElapsed) {
+          const idealOffset = this._CalculateIdealOffset();
+          const idealLookat = this._CalculateIdealLookat();
+
+          // const t = 0.05;
+          // const t = 4.0 * timeElapsed;
+          const t = 1.0 - Math.pow(0.001, timeElapsed);
+
+          this._currentPosition.lerp(idealOffset, t);
+          this._currentLookat.lerp(idealLookat, t);
+
+          this._camera.position.copy(this._currentPosition);
+          this._camera.lookAt(this._currentLookat);
+        }
+      }
 
       const scene = new THREE.Scene();
       scene.background = new THREE.Color("#34495E");
 
-      const camera = new THREE.PerspectiveCamera(
+      camera = new THREE.PerspectiveCamera(
         60,
         window.innerWidth / window.innerHeight
       );
-      camera.position.set(0, 10, 10);
+      camera.position.set(0, 10, -180);
 
       const renderer = new THREE.WebGLRenderer();
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -44,101 +85,290 @@
 
       scene.add(directionalLight, hemisphereLight);
 
-      const cameraControl = new OrbitControls(camera, renderer.domElement);
+      // cameraControl = new OrbitControls(camera, renderer.domElement);
 
-      //---------------------------------------------------------------------------------MODELOS Y LOGICA
+      //---------------------------------------------------------------------------------MODELOS Y LOGIC
 
-      document.onkeydown = function (e) {
-        if (e.keyCode == 87) {
-          z -= 1;
-          console.log("x=", x, ",Y=", y, ",Z=", z);
+      const planeGeometry = new THREE.PlaneGeometry(50, 50);
+      const planeMaterial = new THREE.MeshStandardMaterial({
+        color: "slategrey",
+      });
+      const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+      plane.position.set(0, -0.5, 0);
+      plane.scale.set(5, 10);
+      plane.receiveShadow = true;
+      plane.rotateX(-Math.PI / 2);
+      scene.add(plane);
+
+      const cube1Geometry = new THREE.BoxGeometry(233, 1, 1);
+      const cube1Material = new THREE.MeshBasicMaterial({ color: "red" });
+      const cube1 = new THREE.Mesh(cube1Geometry, cube1Material);
+      cube1.position.z = 150;
+      scene.add(cube1);
+
+      const cube2Geometry = new THREE.BoxGeometry(233, 1, 1);
+      const cube2Material = new THREE.MeshBasicMaterial({ color: "green" });
+      const cube2 = new THREE.Mesh(cube1Geometry, cube1Material);
+      cube2.position.z = -150;
+      scene.add(cube2);
+
+      const loader = new OBJLoader();
+      const textureLoader = new THREE.TextureLoader();
+
+      //Bañera
+      const BaneraTexture = textureLoader.load(
+        "./Modelos/BANERA/BANERA_UV.png"
+      );
+      loader.load(
+        "./Modelos/BANERA/BANERA.obj",
+        function (BANERA) {
+          const BaneraMaterial = new THREE.MeshBasicMaterial({
+            map: BaneraTexture,
+          });
+          BaneraMaterial.castShadow = true;
+          BANERA.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = BaneraMaterial;
+            }
+          });
+          BANERA.position.set(0, 0, 0);
+          BANERA.scale.set(40, 40, 40);
+          scene.add(BANERA);
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded Bañera");
+        },
+        function (error) {
+          console.log("An error happened, Bañera");
         }
+      );
 
-        if (e.keyCode == 83) {
-          z += 1;
-          console.log("x=", x, ",Y=", y, ",Z=", z);
-        }
+      // BarcoJu
 
-        if (e.keyCode == 68) {
-          x -= 1;
-          console.log("x=", x, ",Y=", y, ",Z=", z);
+      const texture = textureLoader.load(
+        "./Modelos/BARCO_JUGUETE/J_BARCO_UV.png"
+      );
+      loader.load(
+        "./Modelos/BARCO_JUGUETE/J_BARCO.obj",
+        function (object) {
+          BarcoJu = object;
+          const material = new THREE.MeshBasicMaterial({ map: texture });
+          material.castShadow = true;
+          BarcoJu.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = material;
+            }
+          });
+          BarcoJu.position.set(0, 0, 0);
+          BarcoJu.scale.set(5, 5, 5);
+          scene.add(BarcoJu);
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded, BarcoJu");
+        },
+        function (error) {
+          console.log("An error happened, BarcoJu");
         }
+      );
 
-        if (e.keyCode == 65) {
-          x += 1;
-          console.log("x=", x, ",Y=", y, ",Z=", z);
+      //BarcoPa
+      const BarcoPaTextura = textureLoader.load(
+        "./Modelos/BARCO_PAPEL/P_BOAT_Layout.png"
+      );
+      loader.load(
+        "./Modelos/BARCO_PAPEL/P_BARCO.obj",
+        function (BarcoPa) {
+          const BarcoPmaterial = new THREE.MeshBasicMaterial({
+            map: BarcoPaTextura,
+          });
+          BarcoPmaterial.castShadow = true;
+          BarcoPa.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = BarcoPmaterial;
+            }
+          });
+          BarcoPa.position.set(0, 0, 70);
+          BarcoPa.scale.set(15, 15, 15);
+
+          // Enable shadows for the BarcoPa object
+          BarcoPa.castShadow = true;
+
+          scene.add(BarcoPa);
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded. BarcoPa");
+        },
+        function (error) {
+          console.log("An error happened. BarcoPa");
         }
-      };
+      );
+
+      //Bola_Blue
+      const bolBTextura = textureLoader.load("./Modelos/BOLA_B/bolaB_3_UV.png");
+      loader.load(
+        "./Modelos/BOLA_B/bola.obj",
+        function (Bola_Blue) {
+          const materialBolaB = new THREE.MeshBasicMaterial({
+            map: bolBTextura,
+          });
+          materialBolaB.castShadow = true;
+          Bola_Blue.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = materialBolaB;
+            }
+          });
+          Bola_Blue.position.set(30, 0, 0);
+          Bola_Blue.scale.set(5, 5, 5);
+
+          // Enable shadows for the Bola_Blue object
+          Bola_Blue.castShadow = true;
+
+          scene.add(Bola_Blue);
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded, Bola_B");
+        },
+        function (error) {
+          console.log("An error happened, Bola_B");
+        }
+      );
+
+      //Bola_Red
+      const bolRTextura = textureLoader.load("./Modelos/BOLA_R/bolaR_1_UV.png");
+      loader.load(
+        "./Modelos/BOLA_R/bola.obj",
+        function (Bola_Red) {
+          const materialBolaR = new THREE.MeshBasicMaterial({
+            map: bolRTextura,
+          });
+          materialBolaR.castShadow = true;
+          Bola_Red.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = materialBolaR;
+            }
+          });
+          Bola_Red.position.set(-30, 0, 0);
+          Bola_Red.scale.set(5, 5, 5);
+          scene.add(Bola_Red);
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Bola_R");
+        },
+        function (error) {
+          console.log("An error happened,Bola_R");
+        }
+      );
+
+      //Bola_Grn
+      const bolGTextura = textureLoader.load("./Modelos/BOLA_G/bolaG_2_UV.png");
+      loader.load(
+        "./Modelos/BOLA_R/bola.obj",
+        function (Bola_Grn) {
+          const materialBolaG = new THREE.MeshBasicMaterial({
+            map: bolGTextura,
+          });
+          materialBolaG.castShadow = true;
+          Bola_Grn.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = materialBolaG;
+            }
+          });
+          Bola_Grn.position.set(50, 0, -70);
+          Bola_Grn.scale.set(5, 5, 5);
+          scene.add(Bola_Grn);
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Bola_G");
+        },
+        function (error) {
+          console.log("An error happened,Bola_G");
+        }
+      );
+
+      //Shark
+      const sharkTexture = textureLoader.load("./Modelos/SHARK/shart_UV.png");
+      loader.load(
+        "./Modelos/SHARK/shark.obj",
+        function (Shark) {
+          const sharkMat = new THREE.MeshBasicMaterial({
+            map: sharkTexture,
+          });
+          sharkMat.castShadow = true;
+          Shark.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = sharkMat;
+            }
+          });
+
+          Shark.position.set(0, 5, -90);
+          Shark.scale.set(15, 15, 15);
+          scene.add(Shark);
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Shark");
+        },
+        function (error) {
+          console.log("An error happened,Shark");
+        }
+      );
+
+      //Pato
+      const duck1Texture = textureLoader.load("./Modelos/PATO/PATO_UV.png");
+      loader.load(
+        "./Modelos/PATO/PATO.obj",
+        function (duck1object) {
+          const duck1Mat = new THREE.MeshBasicMaterial({
+            map: duck1Texture,
+          });
+          duck1Mat.castShadow = true;
+
+          duck1object.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = duck1Mat;
+            }
+          });
+
+          duck1object.position.set(0, 0, -160);
+          scene.add(duck1object);
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Duck1");
+        },
+        function (error) {
+          console.log("An error happened,Duck1");
+        }
+      );
+
+      pivot = new THREE.Group();
+      pivot.position(duck1object.position);
+      pivot.add(camera);
+      pivot.add(duck1object);
+      scene.add(pivot);
 
       function animate() {
         renderer.render(scene, camera);
         requestAnimationFrame(animate);
       }
 
-      const loader = new OBJLoader();
-      //Bañera
-      loader.load(
-        "./Modelos/BANERA/BAÑERA.obj",
-        function (BANERA) {
-          BANERA.position.set(0, 0, 0);
-          BANERA.scale.set(40, 40, 40);
-          scene.add(BANERA);
-        },
-        function (xhr) {
-          //console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
-        },
-        function (error) {
-          //console.log("An error happened");
+      document.onkeydown = function (e) {
+        switch (e.keyCode) {
+          case 87:
+            camera.position.z += 1;
+            duck1object.position.z += 1;
+            break;
+          case 83:
+            camera.position.z -= 1;
+            duck1object.position.z -= 1;
+            break;
+          case 68:
+            pivot.rotation.y -= 0.1745; // Rotate 10 degrees
+            break;
+          case 65:
+            pivot.rotation.y += 0.1745; // Rotate -10 degrees
+            break;
         }
-      );
+      };
 
-      //BarcoJu
-      loader.load(
-        "./Modelos/BARCO_JUGUETE/J_BARCO.obj",
-        function (BarcoJu) {
-          BarcoJu.position.set(0, 0, 0);
-          BarcoJu.scale.set(5, 5, 5);
-          scene.add(BarcoJu);
-        },
-        function (xhr) {
-          //console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
-        },
-        function (error) {
-          //console.log("An error happened");
-        }
-      );
-      
-      //BarcoPa
-      loader.load(
-        "./Modelos/BARCO_PAPEL/P_BARCO.obj",
-        function (BarcoPa) {
-          BarcoPa.position.set(0, 0, 50);
-          BarcoPa.scale.set(5, 5, 5);
-          scene.add(BarcoPa);
-        },
-        function (xhr) {
-          //console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
-        },
-        function (error) {
-          //console.log("An error happened");
-        }
-      );
-      
-      //Bola_Blue
-      loader.load(
-        "./Modelos/BOLA_B/bola.obj",
-        function (Bola_Blue) {
-          Bola_Blue.position.set(30, 0, 0);
-          Bola_Blue.scale.set(5, 5, 5);
-          scene.add(Bola_Blue);
-        },
-        function (xhr) {
-          console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
-        },
-        function (error) {
-          console.log("An error happened");
-        }
-      );
       animate();
     </script>
   </body>
