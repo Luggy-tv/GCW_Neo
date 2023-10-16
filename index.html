@@ -19,48 +19,32 @@
       import { MTLLoader } from "./MtLLoader.js";
 
       let duck1object;
+      let duck2object;
+      let bandera1object;
+      let bandera2object;
       var BarcoJu;
       var camera;
       var cameraControl;
       var pivot;
+      const loader = new OBJLoader();
+      const textureLoader = new THREE.TextureLoader();
+
       //-----------------------------------------ESCENA Y CAMARA
 
-      class CamaraTercerPersona {
-        constructor(params) {
-          this._params = params;
-          this._camera = params.camera;
+      function updateCamera() {
+        const duckDirection = new THREE.Vector3(0, 0, 1); // Dirección inicial del pato
+        duckDirection.applyQuaternion(duck1object.quaternion);
+        duckDirection.normalize();
 
-          this._currentPosition = new THREE.Vector3();
-          this._currentLookat = new THREE.Vector3();
-        }
+        const cameraDistance = 20; // Distancia entre la cámara y el pato
+        const cameraHeight = 10; // Ajusta la altura de la cámara
+        const cameraPosition = duck1object.position
+          .clone()
+          .addScaledVector(duckDirection, -cameraDistance)
+          .add(new THREE.Vector3(0, cameraHeight, 0));
 
-        _CalculateIdealOffset() {
-          const idealOffset = new THREE.Vector3(-15, 20, -30);
-          idealOffset.applyQuaternion(this._params.target.Rotation);
-          idealOffset.add(this._params.target.Position);
-          return idealOffset;
-        }
-
-        _CalculateIdealLookat() {
-          const idealLookat = new THREE.Vector3(0, 10, 50);
-          idealLookat.applyQuaternion(this._params.target.Rotation);
-          idealLookat.add(this._params.target.Position);
-          return idealLookat;
-        }
-        Update(timeElapsed) {
-          const idealOffset = this._CalculateIdealOffset();
-          const idealLookat = this._CalculateIdealLookat();
-
-          // const t = 0.05;
-          // const t = 4.0 * timeElapsed;
-          const t = 1.0 - Math.pow(0.001, timeElapsed);
-
-          this._currentPosition.lerp(idealOffset, t);
-          this._currentLookat.lerp(idealLookat, t);
-
-          this._camera.position.copy(this._currentPosition);
-          this._camera.lookAt(this._currentLookat);
-        }
+        camera.position.copy(cameraPosition);
+        camera.lookAt(duck1object.position);
       }
 
       const scene = new THREE.Scene();
@@ -70,7 +54,15 @@
         60,
         window.innerWidth / window.innerHeight
       );
-      camera.position.set(0, 10, -180);
+      camera.position.set(0, 30, -165);
+
+      function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      window.addEventListener("resize", onWindowResize);
 
       const renderer = new THREE.WebGLRenderer();
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -85,7 +77,7 @@
 
       scene.add(directionalLight, hemisphereLight);
 
-      // cameraControl = new OrbitControls(camera, renderer.domElement);
+      cameraControl = new OrbitControls(camera, renderer.domElement);
 
       //---------------------------------------------------------------------------------MODELOS Y LOGIC
 
@@ -112,8 +104,71 @@
       cube2.position.z = -150;
       scene.add(cube2);
 
-      const loader = new OBJLoader();
-      const textureLoader = new THREE.TextureLoader();
+      // const jugador_params = {
+      //   camera: camera,
+      //   scene: scene,
+      //   modelfile: "./Modelos/PATO/PATO.obj",
+      //   texturefile: "./Modelos/PATO/PATO_UV.png",
+      //   initialPos: new THREE.Vector3(0, 0, -160)
+      // };
+      // let player = new Jugador(jugador_params);
+      // const loader = new OBJLoader();
+      // const textureLoader = new THREE.TextureLoader();
+
+      //Pato
+      const duck1Texture = textureLoader.load("./Modelos/PATO/PATO_UV.png");
+      loader.load(
+        "./Modelos/PATO/PATO.obj",
+        function (object) {
+          duck1object = object;
+          const duck1Mat = new THREE.MeshBasicMaterial({
+            map: duck1Texture,
+          });
+          duck1object.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = duck1Mat;
+            }
+          });
+
+          duck1object.position.set(0, 0, -160);
+          duck1object.scale.set(2, 2, 2);
+          scene.add(duck1object);
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Duck1");
+        },
+        function (error) {
+          console.log("An error happened,Duck1");
+        }
+      );
+
+      //Pato2
+      const duck2Texture = textureLoader.load("./Modelos/PATO2/PATO_ROJO.png");
+      loader.load(
+        "./Modelos/PATO2/PATO.obj",
+        function (object) {
+          duck2object = object;
+          const duck2Mat = new THREE.MeshBasicMaterial({
+            map: duck2Texture,
+          });
+          duck2object.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = duck2Mat;
+            }
+          });
+
+          duck2object.position.set(0, 0, 160);
+          duck2object.scale.set(2, 2, 2);
+          duck2object.rotateY(Math.PI);
+          scene.add(duck2object);
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Duck1");
+        },
+        function (error) {
+          console.log("An error happened,Duck1");
+        }
+      );
 
       //Bañera
       const BaneraTexture = textureLoader.load(
@@ -144,7 +199,6 @@
       );
 
       // BarcoJu
-
       const texture = textureLoader.load(
         "./Modelos/BARCO_JUGUETE/J_BARCO_UV.png"
       );
@@ -159,8 +213,9 @@
               child.material = material;
             }
           });
-          BarcoJu.position.set(0, 0, 0);
+          BarcoJu.position.set(0, -2, 0);
           BarcoJu.scale.set(5, 5, 5);
+          BarcoJu.rotateY(Math.PI / 2);
           scene.add(BarcoJu);
         },
         function (xhr) {
@@ -187,8 +242,9 @@
               child.material = BarcoPmaterial;
             }
           });
-          BarcoPa.position.set(0, 0, 70);
+          BarcoPa.position.set(60, 0, 70);
           BarcoPa.scale.set(15, 15, 15);
+          BarcoPa.rotation.y -= THREE.MathUtils.degToRad(45);
 
           // Enable shadows for the BarcoPa object
           BarcoPa.castShadow = true;
@@ -217,8 +273,8 @@
               child.material = materialBolaB;
             }
           });
-          Bola_Blue.position.set(30, 0, 0);
-          Bola_Blue.scale.set(5, 5, 5);
+          Bola_Blue.position.set(70, 0, -40);
+          Bola_Blue.scale.set(15,15,15);
 
           // Enable shadows for the Bola_Blue object
           Bola_Blue.castShadow = true;
@@ -247,8 +303,8 @@
               child.material = materialBolaR;
             }
           });
-          Bola_Red.position.set(-30, 0, 0);
-          Bola_Red.scale.set(5, 5, 5);
+          Bola_Red.position.set(-70, 0, 30);
+          Bola_Red.scale.set(18,18,18);
           scene.add(Bola_Red);
         },
         function (xhr) {
@@ -273,8 +329,8 @@
               child.material = materialBolaG;
             }
           });
-          Bola_Grn.position.set(50, 0, -70);
-          Bola_Grn.scale.set(5, 5, 5);
+          Bola_Grn.position.set(35, 0, -78);
+          Bola_Grn.scale.set(15,15,15);
           scene.add(Bola_Grn);
         },
         function (xhr) {
@@ -300,8 +356,9 @@
             }
           });
 
-          Shark.position.set(0, 5, -90);
+          Shark.position.set(-40, 5, -90);
           Shark.scale.set(15, 15, 15);
+          Shark.rotateY(Math.PI / 3);
           scene.add(Shark);
         },
         function (xhr) {
@@ -312,59 +369,125 @@
         }
       );
 
-      //Pato
-      const duck1Texture = textureLoader.load("./Modelos/PATO/PATO_UV.png");
+      //Bandera 1
+      const bandera1Text = textureLoader.load(
+        "./Modelos/BANDERA_R/Bandera_Y_UV.png"
+      );
       loader.load(
-        "./Modelos/PATO/PATO.obj",
-        function (duck1object) {
-          const duck1Mat = new THREE.MeshBasicMaterial({
-            map: duck1Texture,
+        "./Modelos/BANDERA_R/BANDERA.obj",
+        function (object) {
+          bandera1object = object;
+          const ban1Mat = new THREE.MeshBasicMaterial({
+            map: bandera1Text,
           });
-          duck1Mat.castShadow = true;
-
-          duck1object.traverse(function (child) {
+          bandera1object.traverse(function (child) {
             if (child instanceof THREE.Mesh) {
-              child.material = duck1Mat;
+              child.material = ban1Mat;
             }
           });
-
-          duck1object.position.set(0, 0, -160);
-          scene.add(duck1object);
+          bandera1object.position.set(0, 0, -180);
+          bandera1object.scale.set(5, 5, 5);
+          bandera1object.rotateY(Math.PI / 2);
+          scene.add(bandera1object);
         },
         function (xhr) {
-          console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Duck1");
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Shark");
         },
         function (error) {
-          console.log("An error happened,Duck1");
+          console.log("An error happened,Shark");
         }
       );
 
-      pivot = new THREE.Group();
-      pivot.position(duck1object.position);
-      pivot.add(camera);
-      pivot.add(duck1object);
-      scene.add(pivot);
+      //Bandera 2
+      const bandera2Text = textureLoader.load(
+        "./Modelos/BANDERA_R/Bandera_R_UV.png"
+      );
+      loader.load(
+        "./Modelos/BANDERA_R/BANDERA.obj",
+        function (object) {
+          bandera2object = object;
+          const ban2Mat = new THREE.MeshBasicMaterial({
+            map: bandera2Text,
+          });
+          bandera2object.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = ban2Mat;
+            }
+          });
+          bandera2object.position.set(0, 0, 180);
+          bandera2object.scale.set(5, 5, 5);
+          bandera2object.rotateY(Math.PI / 2);
+          scene.add(bandera2object);
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Shark");
+        },
+        function (error) {
+          console.log("An error happened,Shark");
+        }
+      );
 
       function animate() {
+        // player.Update(0.016);
+        if (duck1object) {
+          updateCamera();
+        }
         renderer.render(scene, camera);
         requestAnimationFrame(animate);
       }
 
       document.onkeydown = function (e) {
         switch (e.keyCode) {
+          //C
+          case 67:
+            console.log(duck1object.position);
+            break;
+          //W
           case 87:
-            camera.position.z += 1;
-            duck1object.position.z += 1;
+            const forward = new THREE.Vector3(0, 0, 2);
+            forward.applyQuaternion(duck1object.quaternion);
+            forward.normalize();
+            duck1object.position.add(forward);
             break;
+          //S
           case 83:
-            camera.position.z -= 1;
-            duck1object.position.z -= 1;
+            const backward = new THREE.Vector3(0, 0, -2);
+            backward.applyQuaternion(duck1object.quaternion);
+            backward.normalize();
+            duck1object.position.add(backward);
             break;
+          //D
           case 68:
-            pivot.rotation.y -= 0.1745; // Rotate 10 degrees
+            duck1object.rotation.y -= 0.1745;
             break;
+          //S
           case 65:
-            pivot.rotation.y += 0.1745; // Rotate -10 degrees
+            duck1object.rotation.y += 0.1745;
+            break;
+
+          //Arrow Key Up
+          case 38:
+            const forward2 = new THREE.Vector3(0, 0, 2);
+            forward2.applyQuaternion(duck2object.quaternion);
+            forward2.normalize();
+            duck2object.position.add(forward2);
+            break;
+          //Arrow Key Down
+          case 40:
+            const backward2 = new THREE.Vector3(0, 0, -2);
+            backward2.applyQuaternion(duck2object.quaternion);
+            backward2.normalize();
+            duck2object.position.add(backward2);
+          //Arrow Key Right
+          case 39:
+            duck2object.rotation.y += 0.1745;
+            break;
+          //Arrow Key Left
+          case 37:
+            duck2object.rotation.y -= 0.1745;
+            break;
+
+          default:
             break;
         }
       };
