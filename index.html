@@ -29,6 +29,20 @@
       const loader = new OBJLoader();
       const textureLoader = new THREE.TextureLoader();
 
+      const keys1 = {
+        forward: false,
+        backward: false,
+        left: false,
+        right: false,
+      };
+
+      const keys2 = {
+        forward: false,
+        backward: false,
+        left: false,
+        right: false,
+      };
+
       //-----------------------------------------ESCENA Y CAMARA
 
       function updateCamera() {
@@ -159,7 +173,7 @@
 
           duck2object.position.set(0, 0, 160);
           duck2object.scale.set(2, 2, 2);
-          duck2object.rotateY(Math.PI);
+          duck2object.rotation.y+=180;
           scene.add(duck2object);
         },
         function (xhr) {
@@ -251,6 +265,7 @@
 
           scene.add(BarcoPa);
         },
+
         function (xhr) {
           console.log((xhr.loaded / xhr.total) * 100 + "% loaded. BarcoPa");
         },
@@ -274,7 +289,7 @@
             }
           });
           Bola_Blue.position.set(70, 0, -40);
-          Bola_Blue.scale.set(15,15,15);
+          Bola_Blue.scale.set(15, 15, 15);
 
           // Enable shadows for the Bola_Blue object
           Bola_Blue.castShadow = true;
@@ -304,7 +319,7 @@
             }
           });
           Bola_Red.position.set(-70, 0, 30);
-          Bola_Red.scale.set(18,18,18);
+          Bola_Red.scale.set(18, 18, 18);
           scene.add(Bola_Red);
         },
         function (xhr) {
@@ -330,7 +345,7 @@
             }
           });
           Bola_Grn.position.set(35, 0, -78);
-          Bola_Grn.scale.set(15,15,15);
+          Bola_Grn.scale.set(15, 15, 15);
           scene.add(Bola_Grn);
         },
         function (xhr) {
@@ -427,71 +442,155 @@
         }
       );
 
+      document.addEventListener("keydown", (e) => _onKeyDown(e), false);
+      document.addEventListener("keyup", (e) => _onKeyUp(e), false);
+
+      function _onKeyDown(event) {
+        switch (event.keyCode) {
+          case 87: // w
+            keys1.forward = true;
+            break;
+          case 65: // a
+            keys1.left = true;
+            break;
+          case 83: // s
+            keys1.backward = true;
+            break;
+          case 68: // d
+            keys1.right = true;
+            break;
+
+          //Arrow Key Up
+          case 38:
+            keys2.forward=true;
+            break;
+          //Arrow Key Down
+          case 40:
+          keys2.backward=true;
+          //Arrow Key Right
+          case 39:
+          keys2.right=true;
+            break;
+          //Arrow Key Left
+          case 37:
+            keys2.left=true;
+            break;
+        }
+      }
+
+      function _onKeyUp(event) {
+        switch (event.keyCode) {
+          case 87: // w
+            keys1.forward = false;
+            break;
+          case 65: // a
+            keys1.left = false;
+            break;
+          case 83: // s
+            keys1.backward = false;
+            break;
+          case 68: // d
+            keys1.right = false;
+            break;
+
+            //Arrow Key Up
+          case 38:
+            keys2.forward=false;
+            break;
+          //Arrow Key Down
+          case 40:
+          keys2.backward=false;
+          //Arrow Key Right
+          case 39:
+          keys2.right=false;
+            break;
+          //Arrow Key Left
+          case 37:
+            keys2.left=false;
+            break;
+        }
+      }
+
+      function movement(_target, timeInSeconds, keys) {
+        if (!_target) {
+          return;
+        }
+        let decceleration = new THREE.Vector3(-0.0005, -0.0001, -5.0);
+        let acceleration = new THREE.Vector3(1, 0.15, 3000);
+        let velocity = new THREE.Vector3(0, 0, 0);
+
+        const frameDecceleration = new THREE.Vector3(
+          velocity.x * decceleration.x,
+          velocity.y * decceleration.y,
+          velocity.z * decceleration.z
+        );
+        frameDecceleration.multiplyScalar(timeInSeconds);
+        frameDecceleration.z =
+          Math.sign(frameDecceleration.z) *
+          Math.min(Math.abs(frameDecceleration.z), Math.abs(velocity.z));
+
+        velocity.add(frameDecceleration);
+        const controlObject = _target;
+        const _Q = new THREE.Quaternion();
+        const _A = new THREE.Vector3();
+        const _R = controlObject.quaternion.clone();
+
+        const acc = acceleration.clone();
+
+        if (keys.forward) {
+          velocity.z += acc.z * timeInSeconds;
+        }
+        if (keys.backward) {
+          velocity.z -= acc.z * timeInSeconds;
+        }
+        if (keys.left) {
+          _A.set(0, 1, 0);
+          _Q.setFromAxisAngle(
+            _A,
+            4.0 * Math.PI * timeInSeconds * acceleration.y
+          );
+          _R.multiply(_Q);
+        }
+        if (keys.right) {
+          _A.set(0, 1, 0);
+          _Q.setFromAxisAngle(
+            _A,
+            4.0 * -Math.PI * timeInSeconds * acceleration.y
+          );
+          _R.multiply(_Q);
+        }
+        controlObject.quaternion.copy(_R);
+
+        const oldPosition = new THREE.Vector3();
+        oldPosition.copy(controlObject.position);
+
+        const forward = new THREE.Vector3(0, 0, 1);
+        forward.applyQuaternion(controlObject.quaternion);
+        forward.normalize();
+
+        const sideways = new THREE.Vector3(1, 0, 0);
+        sideways.applyQuaternion(controlObject.quaternion);
+        sideways.normalize();
+
+        sideways.multiplyScalar(velocity.x * timeInSeconds);
+        forward.multiplyScalar(velocity.z * timeInSeconds);
+
+        controlObject.position.add(forward);
+        controlObject.position.add(sideways);
+
+        oldPosition.copy(controlObject.position);
+      }
+
       function animate() {
         // player.Update(0.016);
+        movement(duck1object, 0.016, keys1);
+        movement(duck2object,0.016,keys2);
         if (duck1object) {
           updateCamera();
         }
         renderer.render(scene, camera);
         requestAnimationFrame(animate);
       }
-
-      document.onkeydown = function (e) {
-        switch (e.keyCode) {
-          //C
-          case 67:
-            console.log(duck1object.position);
-            break;
-          //W
-          case 87:
-            const forward = new THREE.Vector3(0, 0, 2);
-            forward.applyQuaternion(duck1object.quaternion);
-            forward.normalize();
-            duck1object.position.add(forward);
-            break;
-          //S
-          case 83:
-            const backward = new THREE.Vector3(0, 0, -2);
-            backward.applyQuaternion(duck1object.quaternion);
-            backward.normalize();
-            duck1object.position.add(backward);
-            break;
-          //D
-          case 68:
-            duck1object.rotation.y -= 0.1745;
-            break;
-          //S
-          case 65:
-            duck1object.rotation.y += 0.1745;
-            break;
-
-          //Arrow Key Up
-          case 38:
-            const forward2 = new THREE.Vector3(0, 0, 2);
-            forward2.applyQuaternion(duck2object.quaternion);
-            forward2.normalize();
-            duck2object.position.add(forward2);
-            break;
-          //Arrow Key Down
-          case 40:
-            const backward2 = new THREE.Vector3(0, 0, -2);
-            backward2.applyQuaternion(duck2object.quaternion);
-            backward2.normalize();
-            duck2object.position.add(backward2);
-          //Arrow Key Right
-          case 39:
-            duck2object.rotation.y += 0.1745;
-            break;
-          //Arrow Key Left
-          case 37:
-            duck2object.rotation.y -= 0.1745;
-            break;
-
-          default:
-            break;
-        }
-      };
-
       animate();
     </script>
   </body>
