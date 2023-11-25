@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Juego</title>
+    <style>
+      body {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <script type="module">
+      import * as THREE from "./Modules/three.module.js";
+      import { OrbitControls } from "./Modules/OrbitControls.js";
+      import { OBJLoader } from "./Modules/OBJLoader.js";
+      import { MTLLoader } from "./Modules/MtLLoader.js";
+
+      let duck1object;
+      let duck2object;
+      let bandera1object;
+      let bandera2object;
+      var BarcoJu;
+      var camera;
+      var cameraControl;
+      var pivot;
+      const loader = new OBJLoader();
+      const textureLoader = new THREE.TextureLoader();
+
+      const keys1 = {
+        forward: false,
+        backward: false,
+        left: false,
+        right: false,
+      };
+
+      const keys2 = {
+        forward: false,
+        backward: false,
+        left: false,
+        right: false,
+      };
+
+      //-----------------------------------------ESCENA Y CAMARA
+
+      function updateCamera() {
+        const duckDirection = new THREE.Vector3(0, 0, 1); // Dirección inicial del pato
+        duckDirection.applyQuaternion(duck1object.quaternion);
+        duckDirection.normalize();
+
+        const cameraDistance = 20; // Distancia entre la cámara y el pato
+        const cameraHeight = 10; // Ajusta la altura de la cámara
+        const cameraPosition = duck1object.position
+          .clone()
+          .addScaledVector(duckDirection, -cameraDistance)
+          .add(new THREE.Vector3(0, cameraHeight, 0));
+
+        camera.position.copy(cameraPosition);
+        camera.lookAt(duck1object.position);
+      }
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color("#34495E");
+
+      camera = new THREE.PerspectiveCamera(
+        60,
+        window.innerWidth / window.innerHeight
+      );
+      camera.position.set(0, 30, -165);
+
+      function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      window.addEventListener("resize", onWindowResize);
+
+      const renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.shadowMap.enabled = true;
+      document.body.appendChild(renderer.domElement);
+
+      const hemisphereLight = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
+
+      const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+      directionalLight.position.set(1, 5, -1);
+      directionalLight.castShadow = true;
+
+      scene.add(directionalLight, hemisphereLight);
+
+      cameraControl = new OrbitControls(camera, renderer.domElement);
+
+      //---------------------------------------------------------------------------------MODELOS Y LOGIC
+
+      const planeGeometry = new THREE.PlaneGeometry(50, 50);
+      const planeMaterial = new THREE.MeshStandardMaterial({
+        color: "slategrey",
+      });
+      const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+      plane.position.set(0, -0.5, 0);
+      plane.scale.set(5, 10);
+      plane.receiveShadow = true;
+      plane.rotateX(-Math.PI / 2);
+      scene.add(plane);
+
+      const cube1Geometry = new THREE.BoxGeometry(233, 1, 1);
+      const cube1Material = new THREE.MeshBasicMaterial({ color: "red" });
+      const cube1 = new THREE.Mesh(cube1Geometry, cube1Material);
+      cube1.position.z = 150;
+      scene.add(cube1);
+
+      const cube2Geometry = new THREE.BoxGeometry(233, 1, 1);
+      const cube2Material = new THREE.MeshBasicMaterial({ color: "green" });
+      const cube2 = new THREE.Mesh(cube1Geometry, cube1Material);
+      cube2.position.z = -150;
+      scene.add(cube2);
+
+      // const jugador_params = {
+      //   camera: camera,
+      //   scene: scene,
+      //   modelfile: "./Modelos/PATO/PATO.obj",
+      //   texturefile: "./Modelos/PATO/PATO_UV.png",
+      //   initialPos: new THREE.Vector3(0, 0, -160)
+      // };
+      // let player = new Jugador(jugador_params);
+      // const loader = new OBJLoader();
+      // const textureLoader = new THREE.TextureLoader();
+
+      //Pato
+      const duck1Texture = textureLoader.load("./Modelos/PATO/PATO_UV.png");
+      loader.load(
+        "./Modelos/PATO/PATO.obj",
+        function (object) {
+          duck1object = object;
+          const duck1Mat = new THREE.MeshBasicMaterial({
+            map: duck1Texture,
+          });
+          duck1object.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = duck1Mat;
+            }
+          });
+
+          duck1object.position.set(0, 0, -160);
+          duck1object.scale.set(2, 2, 2);
+          scene.add(duck1object);
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Duck1");
+        },
+        function (error) {
+          console.log("An error happened,Duck1");
+        }
+      );
+
+      //Pato2
+      const duck2Texture = textureLoader.load("./Modelos/PATO2/PATO_ROJO.png");
+      loader.load(
+        "./Modelos/PATO2/PATO.obj",
+        function (object) {
+          duck2object = object;
+          const duck2Mat = new THREE.MeshBasicMaterial({
+            map: duck2Texture,
+          });
+          duck2object.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = duck2Mat;
+            }
+          });
+
+          duck2object.position.set(0, 0, 160);
+          duck2object.scale.set(2, 2, 2);
+          duck2object.rotation.y+=180;
+          scene.add(duck2object);
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Duck1");
+        },
+        function (error) {
+          console.log("An error happened,Duck1");
+        }
+      );
+
+      //Bañera
+      const BaneraTexture = textureLoader.load(
+        "./Modelos/BANERA/BANERA_UV.png"
+      );
+      loader.load(
+        "./Modelos/BANERA/BANERA.obj",
+        function (BANERA) {
+          const BaneraMaterial = new THREE.MeshBasicMaterial({
+            map: BaneraTexture,
+          });
+          BaneraMaterial.castShadow = true;
+          BANERA.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = BaneraMaterial;
+            }
+          });
+          BANERA.position.set(0, 0, 0);
+          BANERA.scale.set(40, 40, 40);
+          scene.add(BANERA);
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded Bañera");
+        },
+        function (error) {
+          console.log("An error happened, Bañera");
+        }
+      );
+
+      // BarcoJu
+      const texture = textureLoader.load(
+        "./Modelos/BARCO_JUGUETE/J_BARCO_UV.png"
+      );
+      loader.load(
+        "./Modelos/BARCO_JUGUETE/J_BARCO.obj",
+        function (object) {
+          BarcoJu = object;
+          const material = new THREE.MeshBasicMaterial({ map: texture });
+          material.castShadow = true;
+          BarcoJu.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = material;
+            }
+          });
+          BarcoJu.position.set(0, -2, 0);
+          BarcoJu.scale.set(5, 5, 5);
+          BarcoJu.rotateY(Math.PI / 2);
+          scene.add(BarcoJu);
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded, BarcoJu");
+        },
+        function (error) {
+          console.log("An error happened, BarcoJu");
+        }
+      );
+
+      //BarcoPa
+      const BarcoPaTextura = textureLoader.load(
+        "./Modelos/BARCO_PAPEL/P_BOAT_Layout.png"
+      );
+      loader.load(
+        "./Modelos/BARCO_PAPEL/P_BARCO.obj",
+        function (BarcoPa) {
+          const BarcoPmaterial = new THREE.MeshBasicMaterial({
+            map: BarcoPaTextura,
+          });
+          BarcoPmaterial.castShadow = true;
+          BarcoPa.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = BarcoPmaterial;
+            }
+          });
+          BarcoPa.position.set(60, 0, 70);
+          BarcoPa.scale.set(15, 15, 15);
+          BarcoPa.rotation.y -= THREE.MathUtils.degToRad(45);
+
+          // Enable shadows for the BarcoPa object
+          BarcoPa.castShadow = true;
+
+          scene.add(BarcoPa);
+        },
+
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded. BarcoPa");
+        },
+        function (error) {
+          console.log("An error happened. BarcoPa");
+        }
+      );
+
+      //Bola_Blue
+      const bolBTextura = textureLoader.load("./Modelos/BOLA_B/bolaB_3_UV.png");
+      loader.load(
+        "./Modelos/BOLA_B/bola.obj",
+        function (Bola_Blue) {
+          const materialBolaB = new THREE.MeshBasicMaterial({
+            map: bolBTextura,
+          });
+          materialBolaB.castShadow = true;
+          Bola_Blue.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = materialBolaB;
+            }
+          });
+          Bola_Blue.position.set(70, 0, -40);
+          Bola_Blue.scale.set(15, 15, 15);
+
+          // Enable shadows for the Bola_Blue object
+          Bola_Blue.castShadow = true;
+
+          scene.add(Bola_Blue);
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded, Bola_B");
+        },
+        function (error) {
+          console.log("An error happened, Bola_B");
+        }
+      );
+
+      //Bola_Red
+      const bolRTextura = textureLoader.load("./Modelos/BOLA_R/bolaR_1_UV.png");
+      loader.load(
+        "./Modelos/BOLA_R/bola.obj",
+        function (Bola_Red) {
+          const materialBolaR = new THREE.MeshBasicMaterial({
+            map: bolRTextura,
+          });
+          materialBolaR.castShadow = true;
+          Bola_Red.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = materialBolaR;
+            }
+          });
+          Bola_Red.position.set(-70, 0, 30);
+          Bola_Red.scale.set(18, 18, 18);
+          scene.add(Bola_Red);
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Bola_R");
+        },
+        function (error) {
+          console.log("An error happened,Bola_R");
+        }
+      );
+
+      //Bola_Grn
+      const bolGTextura = textureLoader.load("./Modelos/BOLA_G/bolaG_2_UV.png");
+      loader.load(
+        "./Modelos/BOLA_R/bola.obj",
+        function (Bola_Grn) {
+          const materialBolaG = new THREE.MeshBasicMaterial({
+            map: bolGTextura,
+          });
+          materialBolaG.castShadow = true;
+          Bola_Grn.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = materialBolaG;
+            }
+          });
+          Bola_Grn.position.set(35, 0, -78);
+          Bola_Grn.scale.set(15, 15, 15);
+          scene.add(Bola_Grn);
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Bola_G");
+        },
+        function (error) {
+          console.log("An error happened,Bola_G");
+        }
+      );
+
+      //Shark
+      const sharkTexture = textureLoader.load("./Modelos/SHARK/shart_UV.png");
+      loader.load(
+        "./Modelos/SHARK/shark.obj",
+        function (Shark) {
+          const sharkMat = new THREE.MeshBasicMaterial({
+            map: sharkTexture,
+          });
+          sharkMat.castShadow = true;
+          Shark.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = sharkMat;
+            }
+          });
+
+          Shark.position.set(-40, 5, -90);
+          Shark.scale.set(15, 15, 15);
+          Shark.rotateY(Math.PI / 3);
+          scene.add(Shark);
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Shark");
+        },
+        function (error) {
+          console.log("An error happened,Shark");
+        }
+      );
+
+      //Bandera 1
+      const bandera1Text = textureLoader.load(
+        "./Modelos/BANDERA_R/Bandera_Y_UV.png"
+      );
+      loader.load(
+        "./Modelos/BANDERA_R/BANDERA.obj",
+        function (object) {
+          bandera1object = object;
+          const ban1Mat = new THREE.MeshBasicMaterial({
+            map: bandera1Text,
+          });
+          bandera1object.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = ban1Mat;
+            }
+          });
+          bandera1object.position.set(0, 0, -180);
+          bandera1object.scale.set(5, 5, 5);
+          bandera1object.rotateY(Math.PI / 2);
+          scene.add(bandera1object);
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Shark");
+        },
+        function (error) {
+          console.log("An error happened,Shark");
+        }
+      );
+
+      //Bandera 2
+      const bandera2Text = textureLoader.load(
+        "./Modelos/BANDERA_R/Bandera_R_UV.png"
+      );
+      loader.load(
+        "./Modelos/BANDERA_R/BANDERA.obj",
+        function (object) {
+          bandera2object = object;
+          const ban2Mat = new THREE.MeshBasicMaterial({
+            map: bandera2Text,
+          });
+          bandera2object.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = ban2Mat;
+            }
+          });
+          bandera2object.position.set(0, 0, 180);
+          bandera2object.scale.set(5, 5, 5);
+          bandera2object.rotateY(Math.PI / 2);
+          scene.add(bandera2object);
+        },
+        function (xhr) {
+          console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Shark");
+        },
+        function (error) {
+          console.log("An error happened,Shark");
+        }
+      );
+
+      document.addEventListener("keydown", (e) => _onKeyDown(e), false);
+      document.addEventListener("keyup", (e) => _onKeyUp(e), false);
+
+      function _onKeyDown(event) {
+        switch (event.keyCode) {
+          case 87: // w
+            keys1.forward = true;
+            break;
+          case 65: // a
+            keys1.left = true;
+            break;
+          case 83: // s
+            keys1.backward = true;
+            break;
+          case 68: // d
+            keys1.right = true;
+            break;
+
+          //Arrow Key Up
+          case 38:
+            keys2.forward=true;
+            break;
+          //Arrow Key Down
+          case 40:
+          keys2.backward=true;
+          //Arrow Key Right
+          case 39:
+          keys2.right=true;
+            break;
+          //Arrow Key Left
+          case 37:
+            keys2.left=true;
+            break;
+        }
+      }
+
+      function _onKeyUp(event) {
+        switch (event.keyCode) {
+          case 87: // w
+            keys1.forward = false;
+            break;
+          case 65: // a
+            keys1.left = false;
+            break;
+          case 83: // s
+            keys1.backward = false;
+            break;
+          case 68: // d
+            keys1.right = false;
+            break;
+
+            //Arrow Key Up
+          case 38:
+            keys2.forward=false;
+            break;
+          //Arrow Key Down
+          case 40:
+          keys2.backward=false;
+          //Arrow Key Right
+          case 39:
+          keys2.right=false;
+            break;
+          //Arrow Key Left
+          case 37:
+            keys2.left=false;
+            break;
+        }
+      }
+
+      function movement(_target, timeInSeconds, keys) {
+        if (!_target) {
+          return;
+        }
+        let decceleration = new THREE.Vector3(-0.0005, -0.0001, -5.0);
+        let acceleration = new THREE.Vector3(1, 0.15, 3000);
+        let velocity = new THREE.Vector3(0, 0, 0);
+
+        const frameDecceleration = new THREE.Vector3(
+          velocity.x * decceleration.x,
+          velocity.y * decceleration.y,
+          velocity.z * decceleration.z
+        );
+        frameDecceleration.multiplyScalar(timeInSeconds);
+        frameDecceleration.z =
+          Math.sign(frameDecceleration.z) *
+          Math.min(Math.abs(frameDecceleration.z), Math.abs(velocity.z));
+
+        velocity.add(frameDecceleration);
+        const controlObject = _target;
+        const _Q = new THREE.Quaternion();
+        const _A = new THREE.Vector3();
+        const _R = controlObject.quaternion.clone();
+
+        const acc = acceleration.clone();
+
+        if (keys.forward) {
+          velocity.z += acc.z * timeInSeconds;
+        }
+        if (keys.backward) {
+          velocity.z -= acc.z * timeInSeconds;
+        }
+        if (keys.left) {
+          _A.set(0, 1, 0);
+          _Q.setFromAxisAngle(
+            _A,
+            4.0 * Math.PI * timeInSeconds * acceleration.y
+          );
+          _R.multiply(_Q);
+        }
+        if (keys.right) {
+          _A.set(0, 1, 0);
+          _Q.setFromAxisAngle(
+            _A,
+            4.0 * -Math.PI * timeInSeconds * acceleration.y
+          );
+          _R.multiply(_Q);
+        }
+        controlObject.quaternion.copy(_R);
+
+        const oldPosition = new THREE.Vector3();
+        oldPosition.copy(controlObject.position);
+
+        const forward = new THREE.Vector3(0, 0, 1);
+        forward.applyQuaternion(controlObject.quaternion);
+        forward.normalize();
+
+        const sideways = new THREE.Vector3(1, 0, 0);
+        sideways.applyQuaternion(controlObject.quaternion);
+        sideways.normalize();
+
+        sideways.multiplyScalar(velocity.x * timeInSeconds);
+        forward.multiplyScalar(velocity.z * timeInSeconds);
+
+        controlObject.position.add(forward);
+        controlObject.position.add(sideways);
+
+        oldPosition.copy(controlObject.position);
+      }
+
+      function animate() {
+        // player.Update(0.016);
+        movement(duck1object, 0.016, keys1);
+        movement(duck2object,0.016,keys2);
+        if (duck1object) {
+          updateCamera();
+        }
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+      }
+      animate();
+    </script>
+  </body>
+</html>

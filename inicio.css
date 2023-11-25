@@ -1,0 +1,214 @@
+@import url('https://fonts.cdnfonts.com/css/bubbleboddy');
+
+:root{
+    --dark-blue: #023047;
+    --mid-blue: #219ebc;
+    --light-blue: #8ecae6;
+    --yellow: #ffb703;
+    --orange: #fb8500;
+}
+
+body#inicio{
+    background-color: #8ecae6;
+}
+
+body#pausa{
+    background-color: #8ecae6;
+}
+
+body#settings{
+    background-color: #8ecae6;
+}
+
+.main{
+    width: 33%;
+    height: 95vh;
+    margin-right: 10px;
+    margin-left: auto;
+    text-align: center;
+    padding-top: 20px;
+}
+
+.logo{
+    font-size: 100px;
+    font-family: 'bubbleboddy', sans-serif;
+    margin: 0;
+    color: #fb8500;
+    -webkit-text-stroke: 5px #fff;
+}
+
+.subtitulo{
+    font-size: 80px;
+    font-family: 'bubbleboddy', sans-serif;
+    margin-top: 0;
+    margin-bottom: 0;
+    color: #fb8500;
+    -webkit-text-stroke: 3px #fff;
+    padding-top: 30px;
+}
+
+.botones{
+    margin-top: 10%;
+}
+
+button{
+    color: white;
+    font-family: 'bubbleboddy', sans-serif;
+    font-size: 30px;
+    text-shadow:0 0 5px #023047;
+    width: 300px;
+    height: 70px;
+    margin-top: 30px;
+    background-color: var(--mid-blue);
+    border-radius: 20px;
+    border-style:solid;
+    border-width: 5px;
+    border-color: rgb(255, 255, 255);
+    box-shadow: 0 0 0 5px #023047;
+}
+
+.salir{
+    background-color: var(--orange);
+    box-shadow: 0 0 0 5px  #3c2b16;
+}
+
+#salirAjustes{
+    margin-top: 60px;
+}
+
+#jugar{
+    background-color: var(--dark-blue);
+}
+
+.pausamenu{
+    background-color: var(--light-blue);
+    border-radius: 20px;
+    border-style: solid;
+    border-width: 10px;
+    border-color: #219ebc;
+    box-shadow: 0 0 0 5px #023047;
+
+    text-align: center;
+    
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    height: 500px;
+    margin-top: -250px; /* half of you height */
+    width: 400px;
+    margin-left: -200px; /* half of you width */
+}
+
+.ajustes{
+    border-radius: 20px;
+    border-style: solid;
+    border-width: 10px;
+    border-color: #219ebc;
+
+    text-align: center;
+    background-color: #023047;
+
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    height: 500px;
+    margin-top: -250px; /* half of you height */
+    width: 400px;
+    margin-left: -200px; /* half of you width */
+
+
+    box-shadow: 0 0 0 5px #ffffff;
+}
+
+#juego{
+    background-color: #8ecae6;
+}
+
+h3{
+    font-size: 40px;
+    font-family: 'bubbleboddy', sans-serif;
+    color: #ffffff;
+    height: 40px;
+    margin-top: 50px;
+
+}
+
+.box{
+    background-color: #219ebc;
+    display: flex;
+    align-items: center;
+    width: 300px;
+    height: 50px;
+    border-radius: 20px;
+    box-shadow: 0 0 0 5px #8ecae6;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+}
+
+.box .slider{
+    width:100%;
+    height: 100%;
+    display: flex;
+    margin-right: 20px;
+    margin-left: 20px;
+}
+
+.box .slider input{
+    margin-top: 10%;
+    height: 15%;
+    width: 100%;
+    border-radius: 20px;
+    appearance: none;
+    outline: none;
+}
+
+.box .value{
+    font-family: sans-serif;
+    font-size: 20px;
+    color: #ffffff;
+    padding-right: 20px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.slider input{
+    accent-color: var(--light-blue);
+}
+
+.score{
+    height: 60px;
+    width: 400px;
+    border-radius: 20px;
+    background-color: #023047;
+    box-shadow: 0 0 0 5px white;
+
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+}
+
+.score1{
+    margin-top: 0;
+    margin-bottom: 0;
+
+    margin-left: 10%;
+    text-align: left;
+    display: inline-block;
+    width: 40%; 
+}
+
+.score2{
+    margin-top: 0;
+    margin-bottom: 0;
+
+    margin-right: 10%;
+    text-align: right;
+    display: inline-block;
+    width: 40%;
+}
+
+article{
+    height: 100%;
+}
+
