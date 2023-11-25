@@ -56,11 +56,35 @@
         const fov = 60;
         const aspect = 2;
 
-        let duck1object;
-        let duck2object;
+        let duck1object = new THREE.Group();
+        let duck2object = new THREE.Group();
 
-        let bandera1object;
-        let bandera2object;
+        let bandera1object = new THREE.Group();
+        let bandera2object = new THREE.Group();
+
+        //BoundingBoxLoader-----------------
+        const duck1BB = new THREE.Box3();
+        const duck2BB = new THREE.Box3();
+
+        const bandera1BB = new THREE.Box3();
+        const bandera2BB = new THREE.Box3();
+
+        const goalJ2BB = new THREE.Box3(
+          new THREE.Vector3(-130, 0, -0.5),
+          new THREE.Vector3(130, 10, 0.5)
+        );
+
+        const goalJ1BB = new THREE.Box3(
+          new THREE.Vector3(-130, 0, -0.5),
+          new THREE.Vector3(130, 10, 0.5)
+        );
+
+        // const sharkBB = new THREE.Box3();
+        // const BarcoJuBB = new THREE.Box3();
+        // const BarcoPapelBB = new THREE.Box3();
+        // const ballBlueBB = new THREE.Sphere();
+        // const ballRedBB = new THREE.Sphere();
+        // const ballGreenBB = new THREE.Sphere();
 
         const loader = new OBJLoader();
         const textureLoader = new THREE.TextureLoader();
@@ -89,12 +113,13 @@
         camera3.position.set(0, 30, 165);
         const camera3Helper = new THREE.CameraHelper(camera3);
 
+        const controls3 = new OrbitControls(camera3, view3Elem);
+        controls3.target.set(0, 5, 0);
+        controls3.update();
+
         //Escena
         const scene = new THREE.Scene();
         scene.background = new THREE.Color("#34495E");
-
-        // var axesHelper = new THREE.AxesHelper(40);
-        // scene.add(axesHelper);
 
         scene.add(cameraHelper);
         scene.add(camera3Helper);
@@ -134,21 +159,35 @@
           plane.rotateX(-Math.PI / 2);
           scene.add(plane);
         }
-        //Base / Cubo de J1
+        //Base / Cubo de J2
         {
           const cube1Geometry = new THREE.BoxGeometry(233, 1, 1);
           const cube1Material = new THREE.MeshBasicMaterial({ color: "red" });
           const cube1 = new THREE.Mesh(cube1Geometry, cube1Material);
           cube1.position.z = 150;
           scene.add(cube1);
+
+          goalJ2BB.translate(new THREE.Vector3(0, 0, 150));
+
+          const goalJ2BBHelper = new THREE.Box3Helper(goalJ2BB, 0xff0000);
+
+          scene.add(goalJ2BBHelper);
         }
-        //Base / Cubo de J2
+        //Base / Cubo de J1
         {
           const cube1Geometry = new THREE.BoxGeometry(233, 1, 1);
-          const cube1Material = new THREE.MeshBasicMaterial({ color: "red" });
+          const cube1Material = new THREE.MeshBasicMaterial({
+            color: 0xffff00,
+          });
           const cube1 = new THREE.Mesh(cube1Geometry, cube1Material);
           cube1.position.z = -150;
           scene.add(cube1);
+
+          goalJ1BB.translate(new THREE.Vector3(0, 0, -150));
+
+          const goalJ1BBHelper = new THREE.Box3Helper(goalJ1BB, 0xffff00);
+
+          scene.add(goalJ1BBHelper);
         }
         //Modelo PATO 1 J1
         {
@@ -168,7 +207,13 @@
 
               duck1object.position.set(0, 0, -160);
               duck1object.scale.set(2, 2, 2);
+
               scene.add(duck1object);
+
+              //Duck1BoundingBox
+              duck1BB.setFromObject(duck1object);
+              const duck1BBHelper = new THREE.Box3Helper(duck1BB, 0xffff00);
+              scene.add(duck1BBHelper);
             },
             function (xhr) {
               console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Duck1");
@@ -201,6 +246,11 @@
               duck2object.scale.set(2, 2, 2);
 
               scene.add(duck2object);
+
+              //Duck2BoundingBox
+              duck2BB.setFromObject(duck2object);
+              const duck2BBHelper = new THREE.Box3Helper(duck2BB, "red");
+              scene.add(duck2BBHelper);
             },
             function (xhr) {
               console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Duck2");
@@ -446,9 +496,19 @@
               bandera1object.scale.set(5, 5, 5);
               bandera1object.rotateY(Math.PI / 2);
               scene.add(bandera1object);
+
+              //Bandera1 BB
+              bandera1BB.setFromObject(bandera1object);
+              const bandera1BBHelper = new THREE.Box3Helper(
+                bandera1BB,
+                0xffff00
+              );
+              scene.add(bandera1BBHelper);
             },
             function (xhr) {
-              console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Bandera J1");
+              console.log(
+                (xhr.loaded / xhr.total) * 100 + "% loaded,Bandera J1"
+              );
             },
             function (error) {
               console.log("An error happened,Bandera J1");
@@ -476,9 +536,15 @@
               bandera2object.scale.set(5, 5, 5);
               bandera2object.rotateY(Math.PI / 2);
               scene.add(bandera2object);
+              //Bandera2 BB
+              bandera2BB.setFromObject(bandera2object);
+              const bandera2BBHelper = new THREE.Box3Helper(bandera2BB, "red");
+              scene.add(bandera2BBHelper);
             },
             function (xhr) {
-              console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Bandera J2");
+              console.log(
+                (xhr.loaded / xhr.total) * 100 + "% loaded,Bandera J2"
+              );
             },
             function (error) {
               console.log("An error happened,Bandera J2");
@@ -486,7 +552,15 @@
           );
         }
 
+        
+      
         //---Logica de movimiento------------------------------------------------------------------------------
+        const nrmlAccel = 3000;
+        const fastAccel = 5000;
+        const slowAccel = 1000;
+        
+        const duck1Accel= 0;
+        const duck2Accel= 0;
 
         document.addEventListener("keydown", (e) => _onKeyDown(e), false);
         document.addEventListener("keyup", (e) => _onKeyUp(e), false);
@@ -557,12 +631,12 @@
           }
         }
 
-        function movement(_target, timeInSeconds, keys) {
+        function movement(_target, timeInSeconds, keys, accel) {
           if (!_target) {
             return;
           }
           let decceleration = new THREE.Vector3(-0.0005, -0.0001, -5.0);
-          let acceleration = new THREE.Vector3(1, 0.15, 3000);
+          let acceleration = new THREE.Vector3(1, 0.15, accel);
           let velocity = new THREE.Vector3(0, 0, 0);
 
           const frameDecceleration = new THREE.Vector3(
@@ -627,6 +701,135 @@
           oldPosition.copy(controlObject.position);
         }
 
+        //---Logica de Juego-----------------------------------------------------------------------------------
+
+        let puntosJ1 = 0;
+        let puntosJ2 = 0;
+
+        let bandera1Captured = false;
+        let bandera2Captured = false;
+
+        let flag2followsDuck1 = false;
+        let flag1followsDuck2 = false;
+
+        let canMove = true;
+
+        const flag1Originpos = new THREE.Vector3(0, 0, -180);
+        const flag2Originpos = new THREE.Vector3(0, 0, 180);
+
+        let duracionPartida = 15;
+        let tiempoRestante = duracionPartida; //Tiempo en segundos
+        let temporizador;
+
+        function iniciarTemporizador() {
+          temporizador = setInterval(function () {
+            tiempoRestante--;
+          }, 1000);
+        }
+
+        function formatTime(tiempoSegundos) {
+          let minutos = Math.floor(tiempoSegundos / 60);
+          let segundos = tiempoSegundos % 60;
+          return `${minutos}:${segundos < 10 ? "0" : ""}${segundos}`;
+        }
+
+        function followDuck(flagObject, duckObject) {
+          flagObject.position.copy(duckObject.position);
+          flagObject.rotation.copy(duckObject.rotation);
+          flagObject.rotation.y += Math.PI;
+        }
+
+        function resetFlagPos(flagObject, originalPosition) {
+          flagObject.position.copy(originalPosition);
+          flagObject.rotation.set(0, 0, 0);
+          flagObject.rotateY(Math.PI / 2);
+        }
+
+        function checkCollisions() {
+          //Colision PATO AMARILLO con BANDERA ROJA
+          if (duck1BB.intersectsBox(bandera2BB) && !bandera2Captured) {
+            bandera2Captured = true;
+            console.log("La bandera roja esta en posesion del equipo amarillo");
+            flag2followsDuck1 = true;
+          }
+          //Colision PATO ROJO con BANDERA AMARILLA
+          if (duck2BB.intersectsBox(bandera1BB) && !bandera1Captured) {
+            bandera1Captured = true;
+            console.log("La bandera amarilla esta en posesion del equipo rojo");
+            flag1followsDuck2 = true;
+          }
+
+          //Colision PATO AMARILLO con BASE AMARILLA
+          if (duck1BB.intersectsBox(goalJ1BB) && bandera2Captured) {
+            bandera2Captured = false;
+            puntosJ1++;
+            console.log(
+              "La bandera roja ha sido capturada! \n Puntuacion: Amarillo= ",
+              puntosJ1,
+              ", Rojo= ",
+              puntosJ2,
+              " ."
+            );
+            flag2followsDuck1 = false;
+            resetFlagPos(bandera2object, flag2Originpos);
+          }
+
+          //Colision PATO ROJO CON BASE ROJA
+          if (duck2BB.intersectsBox(goalJ2BB) && bandera1Captured) {
+            bandera1Captured = false;
+            puntosJ2++;
+            console.log(
+              "La bandera amarilla ha sido capturada! \n Puntuacion: Amarillo= ",
+              puntosJ1,
+              ", Rojo= ",
+              puntosJ2,
+              " ."
+            );
+            flag1followsDuck2 = false;
+            resetFlagPos(bandera1object, flag1Originpos);
+          }
+
+          if (flag1followsDuck2) {
+            followDuck(bandera1object, duck2object);
+          }
+
+          if (flag2followsDuck1) {
+            followDuck(bandera2object, duck1object);
+          }
+        }
+
+        function printWinner() {
+          if (puntosJ1 > puntosJ2) {
+            console.log(
+              "Fin del juego. Tiempo agotado.\nEL EQUIPO AMARILLO HA GANADO!"
+            );
+          }
+          if (puntosJ2 > puntosJ1) {
+            console.log(
+              "Fin del juego. Tiempo agotado.\nEL EQUIPO ROJO HA GANADO!"
+            );
+          }
+          if (puntosJ1 == puntosJ2) {
+            console.log(
+              "Fin del juego. Tiempo agotado.\nLOS EQUIPOS HAN EMPATADO!"
+            );
+          }
+        }
+
+        function gameLogic() {
+          if (tiempoRestante >= 0) {
+            console.log("Tiempo restante: " + formatTime(tiempoRestante));
+            checkCollisions();
+          } else {
+            clearInterval(temporizador);
+            temporizador = undefined;
+            canMove = false;
+            printWinner();
+          }
+        }
+
+        iniciarTemporizador();
+
         //---Logica de Render----------------------------------------------------------------------------------
         function resizeRendererToDisplaySize(renderer) {
           const canvas = renderer.domElement;
@@ -663,24 +866,25 @@
           return width / height;
         }
 
-        function updateCamera(camera, duck1object) {
+        function updateCamera(camera, duck) {
           const duckDirection = new THREE.Vector3(0, 0, 1);
 
-          duckDirection.applyQuaternion(duck1object.quaternion);
+          duckDirection.applyQuaternion(duck.quaternion);
           duckDirection.normalize();
 
           const cameraDistance = 20;
 
           const cameraHeight = 10;
 
-          const cameraPosition = duck1object.position
+          const cameraPosition = duck.position
             .clone()
-            .addScaledVector(duckDirection, -cameraDistance) 
-            .add(new THREE.Vector3(0, cameraHeight, 0)); 
+            .addScaledVector(duckDirection, -cameraDistance)
+            .add(new THREE.Vector3(0, cameraHeight, 0));
           camera.position.copy(cameraPosition);
-          camera.lookAt(duck1object.position);
+          camera.lookAt(duck.position);
         }
 
+        //Funcion principal de renderizado-------------------------
         function render() {
           resizeRendererToDisplaySize(renderer);
 
@@ -729,12 +933,20 @@
             updateCamera(camera, duck1object);
           }
 
-          if (duck2object) {
-            updateCamera(camera3, duck2object);
+          // if (duck2object) {
+          //   updateCamera(camera3, duck2object);
+          // }
+
+          if (canMove) {
+            movement(duck1object, 0.016, keys1, 3000);
+            movement(duck2object, 0.016, keys2, 3000);
           }
 
-          movement(duck1object, 0.016, keys1);
-          movement(duck2object, 0.016, keys2);
+          //Actualizar los movimientos de las cajas
+          duck1BB.setFromObject(duck1object);
+          duck2BB.setFromObject(duck2object);
+
+          gameLogic();
 
           requestAnimationFrame(render);
         }
