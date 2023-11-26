@@ -34,11 +34,13 @@
     </style>
   </head>
   <body>
+  
     <canvas id="c"></canvas>
     <div class="split">
       <div id="view1" tabindex="1"></div>
       <div id="view3" tabindex="3"></div>
     </div>
+
     <script type="module">
       //import * as THREE from "https://threejsfundamentals.org/threejs/resources/threejs/r119/build/three.module.js";
       //import { OrbitControls } from "https://threejsfundamentals.org/threejs/resources/threejs/r119/examples/jsm/controls/OrbitControls.js";
@@ -48,6 +50,7 @@
       import { MTLLoader } from "./Modules/MtLLoader.js";
 
       function main() {
+
         const canvas = document.querySelector("#c");
         const view1Elem = document.querySelector("#view1");
         const view3Elem = document.querySelector("#view3");
@@ -113,9 +116,9 @@
         camera3.position.set(0, 30, 165);
         const camera3Helper = new THREE.CameraHelper(camera3);
 
-        const controls3 = new OrbitControls(camera3, view3Elem);
-        controls3.target.set(0, 5, 0);
-        controls3.update();
+        // const controls3 = new OrbitControls(camera3, view3Elem);
+        // controls3.target.set(0, 5, 0);
+        // controls3.update();
 
         //Escena
         const scene = new THREE.Scene();
@@ -260,6 +263,8 @@
             }
           );
         }
+        
+        
         //Bañera
         {
           const BaneraTexture = textureLoader.load(
@@ -475,6 +480,7 @@
             }
           );
         }
+        
         //Bandera J1
         {
           const bandera1Text = textureLoader.load(
@@ -552,15 +558,13 @@
           );
         }
 
-        
-      
         //---Logica de movimiento------------------------------------------------------------------------------
         const nrmlAccel = 3000;
         const fastAccel = 5000;
         const slowAccel = 1000;
-        
-        const duck1Accel= 0;
-        const duck2Accel= 0;
+
+        const duck1Accel = 0;
+        const duck2Accel = 0;
 
         document.addEventListener("keydown", (e) => _onKeyDown(e), false);
         document.addEventListener("keyup", (e) => _onKeyUp(e), false);
@@ -717,7 +721,7 @@
         const flag1Originpos = new THREE.Vector3(0, 0, -180);
         const flag2Originpos = new THREE.Vector3(0, 0, 180);
 
-        let duracionPartida = 15;
+        let duracionPartida = 90;
         let tiempoRestante = duracionPartida; //Tiempo en segundos
         let temporizador;
 
@@ -933,9 +937,9 @@
             updateCamera(camera, duck1object);
           }
 
-          // if (duck2object) {
-          //   updateCamera(camera3, duck2object);
-          // }
+          if (duck2object) {
+            updateCamera(camera3, duck2object);
+          }
 
           if (canMove) {
             movement(duck1object, 0.016, keys1, 3000);
