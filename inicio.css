@@ -9,7 +9,12 @@
 }
 
 body#inicio{
-    background-color: #8ecae6;
+    background-image: url("duckIlustPNG.png");
+    background-size:cover;
+    background-repeat: no-repeat;
+
+    overflow: hidden; 
+
 }
 
 body#pausa{
@@ -21,7 +26,7 @@ body#settings{
 }
 
 body#lobby{
-    background-color: #8ecae6;
+    background-color: #023047;
 }
 
 body#puntuaciones{
@@ -63,9 +68,9 @@ h3{
 }
 
 .logo{
-    font-size: 90px;
+    font-size: 130px;
     font-family: 'bubbleboddy', sans-serif;
-    margin: 0;
+    margin: -30px;
     color: #fb8500;
     -webkit-text-stroke: 5px #fff;
 
@@ -239,14 +244,14 @@ article{
 }
 
 .lobby{
-    background-color: #023047; 
+    background-color: #8ecae6; 
     border-radius: 30px;
     height: 97vh;
     border-radius: 10px;
 }
 
 .lobbyText{
-    color: #ffffff;
+    color: #023047;
     font-family:Arial, Helvetica, sans-serif;
     margin: 0;
     padding-top: 30px;
@@ -315,11 +320,12 @@ section{
     height: 20%;
 
 
-    background-color: #023047;
+    background-color: #8ecae6;
     border-radius: 20px;
     border-style:solid;
     border-width: 0px;
     border-color: rgb(255, 255, 255);
+    box-shadow: 0 0 0 5px #8ecae6;
 
 
 
