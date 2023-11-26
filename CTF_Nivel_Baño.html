@@ -840,8 +840,9 @@
         }
 
         function slowEffectTimer() {
+          console.log(slowTick);
           if (slowEffect) {
-            if (slowTick >= 20) {
+            if (slowTick >= 10) {
               duck1Accel = slowDuck === 1 ? resetAccel(duck1Accel) : duck1Accel;
               duck2Accel = slowDuck === 2 ? resetAccel(duck2Accel) : duck2Accel;
 
@@ -854,6 +855,7 @@
         }
 
         function fastEffectTimer() {
+          console.log(fastTick);
           if (fastEffect) {
             if (fastTick >= 20) {
               duck1Accel = fastDuck === 1 ? resetAccel(duck1Accel) : duck1Accel;
