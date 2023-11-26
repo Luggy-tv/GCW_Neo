@@ -293,7 +293,7 @@ section{
     top: 25%;
 }
 
-.botonLobby{
+.botonModo{
     color: white;
     font-family: 'bubbleboddy', sans-serif;
     font-size: 5vh;
@@ -309,9 +309,23 @@ section{
 
 }
 
-.botonLobby:active {
-    background-color: rgb(123, 180, 17);
+.botonDificultad{
+    color: white;
+    font-family: 'bubbleboddy', sans-serif;
+    font-size: 5vh;
+    width: 50%;
+    height: 25%;
+    margin: 3vh;
+
+    background-color: #219ebc;
+    border-radius: 20px;
+    border-style:solid;
+    border-width: 5px;
+    border-color: rgb(255, 255, 255);
+
 }
+
+
 
 .mapa{
     border-radius: 20px;
@@ -340,4 +354,12 @@ section{
     border-color: rgb(255, 255, 255);
     box-shadow: 0 0 0 5px #ffffff;
 }
+.active {
+    background-color: #ffb703;
+    box-shadow: 0 0 0 5px #ffb703;
+}
 
+.disabled{
+    background-color: red;
+
+}
