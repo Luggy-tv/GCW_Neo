@@ -20,6 +20,10 @@ body#settings{
     background-color: #8ecae6;
 }
 
+body#lobby{
+    background-color: #8ecae6;
+}
+
 .main{
     width: 33%;
     height: 95vh;
@@ -123,6 +127,15 @@ button{
 #juego{
     background-color: #8ecae6;
 }
+h1{
+    margin: 0;
+    padding: 0;
+}
+
+h2{
+    margin: 0;
+    padding: 0;
+}
 
 h3{
     font-size: 40px;
@@ -213,14 +226,113 @@ article{
 }
 
 .lobby{
-    height: 100vh;
+    background-color: #023047; 
+    border-radius: 30px;
+    height: 97vh;
+    border-radius: 10px;
+}
+
+.lobbyText{
+    color: #ffffff;
+    font-family:Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding-top: 25px;
 }
 
 .lobbyDiv{
     width: 50%;
     height: 100%; 
     margin-bottom:auto;
-    background-color: black; 
     float: right
+}
+
+section{
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+#modo{
+    text-align: center;
+    height: 50%;
+}
+
+#dificultad{
+    text-align: center;
+    height: 50%;
+}
+
+#mapa{
+    text-align: center;
+    height: 80%;
+}
+
+#botonComenzar{
+    height: 20%;
+}
+
+.botonComenzar{
+    color: white;
+    font-family: 'bubbleboddy', sans-serif;
+    font-size: 5vh;
+    text-shadow:0 0 5px #023047;
+    width: 70%;
+    height: 50%;
+    margin: 0;
+
+    background-color: #fb8500;
+    border-radius: 20px;
+    border-style:solid;
+    border-width: 5px;
+    border-color: rgb(255, 255, 255);
+    box-shadow: 0 0 0 5px #ffb703;
+
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 25%;
+}
+
+.botonLobby{
+    color: white;
+    font-family: 'bubbleboddy', sans-serif;
+    font-size: 5vh;
+    width: 50%;
+    height: 20%;
+    paddi: 5vh;
+
+    background-color: #219ebc;
+    border-radius: 20px;
+    border-style:solid;
+    border-width: 5px;
+    border-color: rgb(255, 255, 255);
+
+}
+
+.mapa{
+    border-radius: 20px;
+    width: 25%;
+    height: 60vh; 
+    float: right;
+    margin: 4%;
+    background-color: #ffffff;
+}
+
+.mapa img {
+    border-radius: 10px;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.imgBtn{
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: var(--mid-blue);
+    border-width: 0px;
+    border-color: rgb(255, 255, 255);
+    box-shadow: 0 0 0 5px #ffffff;
 }
 
