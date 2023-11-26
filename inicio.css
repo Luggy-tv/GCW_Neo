@@ -69,6 +69,7 @@ button{
     border-width: 5px;
     border-color: rgb(255, 255, 255);
     box-shadow: 0 0 0 5px #023047;
+    cursor: pointer;
 }
 
 .salir{
@@ -236,7 +237,7 @@ article{
     color: #ffffff;
     font-family:Arial, Helvetica, sans-serif;
     margin: 0;
-    padding-top: 25px;
+    padding-top: 30px;
 }
 
 .lobbyDiv{
@@ -297,8 +298,8 @@ section{
     font-family: 'bubbleboddy', sans-serif;
     font-size: 5vh;
     width: 50%;
-    height: 20%;
-    paddi: 5vh;
+    height: 25%;
+    margin: 3vh;
 
     background-color: #219ebc;
     border-radius: 20px;
@@ -306,6 +307,10 @@ section{
     border-width: 5px;
     border-color: rgb(255, 255, 255);
 
+}
+
+.botonLobby:active {
+    background-color: rgb(123, 180, 17);
 }
 
 .mapa{
