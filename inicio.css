@@ -212,3 +212,15 @@ article{
     height: 100%;
 }
 
+.lobby{
+    height: 100vh;
+}
+
+.lobbyDiv{
+    width: 50%;
+    height: 100%; 
+    margin-bottom:auto;
+    background-color: black; 
+    float: right
+}
+
