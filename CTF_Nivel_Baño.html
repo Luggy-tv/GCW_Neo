@@ -88,6 +88,10 @@
         let cajaVerdeBB;
         let cajaGrisBB;
 
+        let posicionCaja1;
+        let posicionCaja2;
+        let posicionCaja3;
+
         const loader = new OBJLoader();
         const textureLoader = new THREE.TextureLoader();
 
@@ -296,9 +300,9 @@
             }
           }
 
-          const posicionCaja1 = obtenerPosicionAleatoria([]);
-          const posicionCaja2 = obtenerPosicionAleatoria([posicionCaja1]);
-          const posicionCaja3 = obtenerPosicionAleatoria([
+          posicionCaja1 = obtenerPosicionAleatoria([]);
+          posicionCaja2 = obtenerPosicionAleatoria([posicionCaja1]);
+          posicionCaja3 = obtenerPosicionAleatoria([
             posicionCaja1,
             posicionCaja2,
           ]);
@@ -609,12 +613,6 @@
         }
 
         //---Logica de movimiento------------------------------------------------------------------------------
-        const nrmlAccel = 2000;
-        const fastAccel = 5000;
-        const slowAccel = 1000;
-
-        let duck1Accel = nrmlAccel;
-        let duck2Accel = nrmlAccel;
 
         document.addEventListener("keydown", (e) => _onKeyDown(e), false);
         document.addEventListener("keyup", (e) => _onKeyUp(e), false);
@@ -772,12 +770,16 @@
 
         let canMove = true;
 
+        let slowEffect = false;
+        let fastEffect = false;
+
         const flag1Originpos = new THREE.Vector3(0, 0, -180);
         const flag2Originpos = new THREE.Vector3(0, 0, 180);
 
         let duracionPartida = 90;
         let tiempoRestante = duracionPartida; //Tiempo en segundos
         let temporizador;
+
         let cajasrespawn = 0;
 
         cajaMorada.name = "cajaMorada";
@@ -788,19 +790,88 @@
         let VBoxStatus = true;
         let GBoxStatus = true;
 
-        function moveBox(box, flag) {
-          if (box.name == "cajaMorada" && MBoxStatus) {
-            cajaMorada.position.set(300, 0, 300);
-            cajaMoradaBB.setFromObject(cajaMorada);
-            MBoxStatus=false;
+        const nrmlAccel = 3000;
+        const fastAccel = 5000;
+        const slowAccel = 1000;
+
+        let duck1Accel = nrmlAccel;
+        let duck2Accel = nrmlAccel;
+
+        let fastDuck = 0;
+        let slowDuck = 0;
+
+        let fastTick = 0;
+        let slowTick = 0;
+
+        function slowTarget(duckAccel, id) {
+          let newDuckAccel = duckAccel;
+
+          newDuckAccel = slowAccel;
+          slowDuck = id;
+          slowEffect = true;
+
+          return newDuckAccel;
+        }
+
+        function fastTarget(duckAccel, id) {
+          let newDuckAccel = duckAccel;
+
+          newDuckAccel = fastAccel;
+          fastDuck = id;
+          fastEffect = true;
+
+          return newDuckAccel;
+        }
+
+        function resetAccel(duckAccel) {
+          duckAccel = nrmlAccel;
+
+          if (fastEffect) {
+            fastEffect = false;
+            fastDuck = 0;
+          }
+
+          if (slowEffect) {
+            slowEffect = false;
+            slowDuck = 0;
+          }
+
+          return duckAccel;
+        }
+
+        function slowEffectTimer() {
+          if (slowEffect) {
+            if (slowTick >= 20) {
+              duck1Accel = slowDuck === 1 ? resetAccel(duck1Accel) : duck1Accel;
+              duck2Accel = slowDuck === 2 ? resetAccel(duck2Accel) : duck2Accel;
+
+              slowEffect = false;
+              slowTick = 0;
+            } else {
+              slowTick++;
+            }
           }
         }
-        function resetBox() {
-          cajaMorada.position.copy(posicionCaja1);
+
+        function fastEffectTimer() {
+          if (fastEffect) {
+            if (fastTick >= 20) {
+              duck1Accel = fastDuck === 1 ? resetAccel(duck1Accel) : duck1Accel;
+              duck2Accel = fastDuck === 2 ? resetAccel(duck2Accel) : duck2Accel;
+
+              fastEffect = false;
+              fastTick = 0;
+            } else {
+              fastTick++;
+            }
+          }
         }
         function iniciarTemporizador() {
           temporizador = setInterval(function () {
             tiempoRestante--;
+
+            slowEffectTimer();
+            fastEffectTimer();
 
             if (cajasrespawn >= 30) {
               resetBox();
@@ -809,6 +880,39 @@
               cajasrespawn++;
             }
           }, 1000);
+        }
+
+        function moveBox(box, flag) {
+          if (box.name == "cajaMorada" && MBoxStatus) {
+            cajaMorada.position.set(300, 0, 300);
+            cajaMoradaBB.setFromObject(cajaMorada);
+            MBoxStatus = false;
+          }
+          if (box.name == "cajaVerde" && VBoxStatus) {
+            cajaVerde.position.set(300, 0, 300);
+            cajaVerdeBB.setFromObject(cajaVerde);
+            VBoxStatus = false;
+          }
+          if (box.name == "cajaGris" && GBoxStatus) {
+            cajaGris.position.set(300, 0, 300);
+            cajaGrisBB.setFromObject(cajaGris);
+            GBoxStatus = false;
+          }
+        }
+
+        function resetBox() {
+          console.log("Se reiniciaron las cajas");
+
+          VBoxStatus = true;
+          GBoxStatus = true;
+          MBoxStatus = true;
+
+          cajaMorada.position.copy(posicionCaja1);
+          cajaVerde.position.copy(posicionCaja2);
+          cajaGris.position.copy(posicionCaja3);
+          cajaMoradaBB.setFromObject(cajaMorada);
+          cajaVerdeBB.setFromObject(cajaVerde);
+          cajaGrisBB.setFromObject(cajaGris);
         }
 
         function formatTime(tiempoSegundos) {
@@ -879,15 +983,38 @@
           //PATO AMARILLO ITEM MORADO
           if (duck1BB.intersectsBox(cajaMoradaBB)) {
             console.log("El equipo amarillo obtuvo el punto extra!");
-            moveBox(cajaMorada,MBoxStatus);
+            moveBox(cajaMorada, MBoxStatus);
+            puntosJ1++;
           }
           //PATO AMARILLO ITEM VERDE
           if (duck1BB.intersectsBox(cajaVerdeBB)) {
-            console.log("Colision con la caja verde");
+            console.log("Power up para el equipo Amarillo");
+            moveBox(cajaVerde, VBoxStatus);
+            duck1Accel = fastTarget(duck1Accel, 1);
           }
           //PATO AMARILLO ITEM GRIS
           if (duck1BB.intersectsBox(cajaGrisBB)) {
-            console.log("Colision con la caja gris");
+            console.log("Desventaja para el equipo Rojo");
+            moveBox(cajaGris, GBoxStatus);
+            duck2Accel = slowTarget(duck2Accel, 2);
+          }
+          //PATO ROJO ITEM MORADO
+          if (duck2BB.intersectsBox(cajaMoradaBB)) {
+            console.log("El equipo rojo obtuvo el punto extra!");
+            moveBox(cajaMorada, MBoxStatus);
+            puntosJ2++;
+          }
+          //PATO ROJO ITEM VERDE
+          if (duck2BB.intersectsBox(cajaVerdeBB)) {
+            console.log("Power up para el equipo Rojo");
+            moveBox(cajaVerde, VBoxStatus);
+            duck2Accel = fastTarget(duck2Accel, 2);
+          }
+          //PATO ROJO ITEM GRIS
+          if (duck2BB.intersectsBox(cajaGrisBB)) {
+            console.log("Desventaja para el equipo Amarillo");
+            moveBox(cajaGris, GBoxStatus);
+            duck1Accel = slowTarget(duck1Accel, 1);
           }
         }
 
@@ -921,7 +1048,7 @@
           }
         }
 
-        // iniciarTemporizador();
+        iniciarTemporizador();
 
         //---Logica de Render----------------------------------------------------------------------------------
         function resizeRendererToDisplaySize(renderer) {
