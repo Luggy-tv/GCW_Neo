@@ -88,6 +88,8 @@
         let cajaVerdeBB;
         let cajaGrisBB;
 
+        let pausa;
+
         const loader = new OBJLoader();
         const textureLoader = new THREE.TextureLoader();
 
@@ -635,7 +637,7 @@
               break;
 
             case 80: //p
-              console.log("posicion del pato1: ", duck1object.position);
+              console.log("Pausa ", pausa);
               break;
 
             //Arrow Key Up

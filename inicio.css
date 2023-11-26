@@ -24,6 +24,35 @@ body#lobby{
     background-color: #8ecae6;
 }
 
+body#puntuaciones{
+    background-color: #219ebc;
+}
+
+h1{
+    font-size: 30px;
+    font-family: 'bubbleboddy', sans-serif;
+    color: #ffffff;
+    margin: 0;
+}
+
+h2{
+    font-size: 30px;
+    font-family: 'bubbleboddy', sans-serif;
+    color: #ffffff;
+    text-shadow:0 0 5px #023047;
+
+    margin: 0;
+    padding: 1rem;
+}
+
+h3{
+    font-size: 40px;
+    font-family: 'bubbleboddy', sans-serif;
+    color: #ffffff;
+    height: 40px;
+    margin-top: 50px;
+}
+
 .main{
     width: 33%;
     height: 95vh;
@@ -34,11 +63,12 @@ body#lobby{
 }
 
 .logo{
-    font-size: 100px;
+    font-size: 90px;
     font-family: 'bubbleboddy', sans-serif;
     margin: 0;
     color: #fb8500;
     -webkit-text-stroke: 5px #fff;
+
 }
 
 .subtitulo{
@@ -127,24 +157,6 @@ button{
 
 #juego{
     background-color: #8ecae6;
-}
-h1{
-    margin: 0;
-    padding: 0;
-}
-
-h2{
-    margin: 0;
-    padding: 0;
-}
-
-h3{
-    font-size: 40px;
-    font-family: 'bubbleboddy', sans-serif;
-    color: #ffffff;
-    height: 40px;
-    margin-top: 50px;
-
 }
 
 .box{
@@ -264,11 +276,11 @@ section{
 
 #mapa{
     text-align: center;
-    height: 80%;
+    height: 70%;
 }
 
 #botonComenzar{
-    height: 20%;
+    height: 30%;
 }
 
 .botonComenzar{
@@ -276,8 +288,8 @@ section{
     font-family: 'bubbleboddy', sans-serif;
     font-size: 5vh;
     text-shadow:0 0 5px #023047;
-    width: 70%;
-    height: 50%;
+    width: 60%;
+    height: 30%;
     margin: 0;
 
     background-color: #fb8500;
@@ -290,7 +302,31 @@ section{
     position: relative;
     left: 50%;
     transform: translateX(-50%);
-    top: 25%;
+    top: 20%;
+}
+
+.salirLobby{
+    color: white;
+    font-family: 'bubbleboddy', sans-serif;
+    font-size: 4vh;
+
+    text-shadow:0 0 5px #023047;
+    width: 50%;
+    height: 20%;
+
+
+    background-color: #023047;
+    border-radius: 20px;
+    border-style:solid;
+    border-width: 0px;
+    border-color: rgb(255, 255, 255);
+
+
+
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 10%;
 }
 
 .botonModo{
@@ -325,12 +361,10 @@ section{
 
 }
 
-
-
 .mapa{
     border-radius: 20px;
     width: 25%;
-    height: 60vh; 
+    height: 50vh; 
     float: right;
     margin: 4%;
     background-color: #ffffff;
@@ -359,7 +393,84 @@ section{
     box-shadow: 0 0 0 5px #ffb703;
 }
 
-.disabled{
-    background-color: red;
+*:disabled{
+    opacity: 50%;
+
+}
+
+.puntuaciones{
+    border-radius: 10px;
+
+    height: 90%;
+    width: 80%;
+
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+
+}
+
+#tablero{
+    text-align: center;
+    height: 80%;
+}
+
+#botonPuntuaciones{
+    text-align: center;
+    height: 20%;
+}
+
+.tableroDiv{
+    margin: 0;
+    background-color: #8ecae6;
+    
+
+    width: 70%;
+    height: 100%;
+    border-radius: 20px;
+    box-shadow: 0 0 0 5px #023047;
+
+    border-style:solid;
+    border-width: 5px;
+    border-color: #ffffff;
+
+
+    position: relative;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+table{
+    width: 80%;
+    height: auto;
+
+    margin: 0 10% 10% 10%;
+}
+
+.header{
+    background-color: #023047;
+    color: #ffffff;
+    font-family: Arial, Helvetica, sans-serif;
+
+    padding: 1%;
+}
+
+#jugador{
+    width: 70%;
+    text-align: left;
+    padding: 1%;
+    padding-left: 5%;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: medium;
+
+}
+
+#puntaje{
+    width: 30%;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: medium;
 
 }
