@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nivel Baño</title>
+    <title>Cuack Game | CTF Muliplayer</title>
+    <link rel="icon" href="Modelos/small-duck.svg" />
     <style>
       html,
       body {
@@ -35,7 +36,10 @@
   </head>
   <body>
     <audio autoplay>
-      <source src="Club Penguin - Pizza Parlor Theme (Charlie's Here) [FULL High Quality].mp3" type="audio/mpeg">
+      <source
+        src="Club Penguin - Pizza Parlor Theme (Charlie's Here) [FULL High Quality].mp3"
+        type="audio/mpeg"
+      />
     </audio>
 
     <canvas id="c"></canvas>
@@ -45,8 +49,6 @@
     </div>
 
     <script type="module">
-      //import * as THREE from "https://threejsfundamentals.org/threejs/resources/threejs/r119/build/three.module.js";
-      //import { OrbitControls } from "https://threejsfundamentals.org/threejs/resources/threejs/r119/examples/jsm/controls/OrbitControls.js";
       import * as THREE from "./Modules/three.module.js";
       import { OrbitControls } from "./Modules/OrbitControls.js";
       import { OBJLoader } from "./Modules/OBJLoader.js";
@@ -124,6 +126,10 @@
         const camera3 = new THREE.PerspectiveCamera(fov, aspect);
         camera3.position.set(0, 30, 165);
         const camera3Helper = new THREE.CameraHelper(camera3);
+
+        // const controls3 = new OrbitControls(camera3, view3Elem);
+        // controls3.target.set(0, 5, 0);
+        // controls3.update();
 
         //Escena
         const scene = new THREE.Scene();
@@ -782,7 +788,7 @@
         const flag1Originpos = new THREE.Vector3(0, 0, -180);
         const flag2Originpos = new THREE.Vector3(0, 0, 180);
 
-        let duracionPartida = 90;
+        let duracionPartida = 120;
         let tiempoRestante = duracionPartida; //Tiempo en segundos
         let temporizador;
 
@@ -874,6 +880,7 @@
             }
           }
         }
+
         function iniciarTemporizador() {
           temporizador = setInterval(function () {
             tiempoRestante--;

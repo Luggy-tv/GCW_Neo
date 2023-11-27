@@ -1,39 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="inicio.css">
-    <title>Document</title>
-</head>
-<body id="puntuaciones">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="inicio.css" />
+    <title>Cuack Game | Puntuaciones</title>
+    <link rel="icon" href="Modelos/small-duck.svg" />
+  </head>
+  <body id="puntuaciones">
     <div class="puntuaciones">
-        <section id="tablero">
-            <div class="tableroDiv">
-                <h2>Puntuaciones</h2>
-                
-                <table>
-                    <tr>
-                        <th class="header" id="jugador">Jugador</th>
-                        <th class="header" id="puntaje">Puntaje</th>
-                    </tr>
-                    <tr>
-                        <td id="jugador">Nombre 1</td>
-                        <td id="puntaje">1000pts</td>
-                    </tr>
-                    <tr>
-                        <td id="jugador">Nombre 2</td>
-                        <td id="puntaje">580pts</td>
-                    </tr>
-                </table>
+      <section id="tablero">
+        <div class="tableroDiv">
+          <h2>Puntuaciones</h2>
 
-            </div>
+          <table id="tablaPuntuaciones">
+            <tr>
+              <th class="header" id="jugador">Jugador</th>
+              <th class="header" id="puntaje">Puntaje</th>
+            </tr>
+          </table>
+        </div>
+      </section>
 
-        </section>
-
-        <section id="botonPuntuaciones">
-            <a href="index.html"><button class="salir" id="salirPuntuaciones">Regresar</button>
-        </section>
+      <section id="botonPuntuaciones">
+        <a href="index.html"
+          ><button class="salir" id="salirPuntuaciones">Regresar</button>
+        </a>
+      </section>
     </div>
-</body>
+
+    <script src="javascript/puntuaciones.js"></script>
+  </body>
 </html>
