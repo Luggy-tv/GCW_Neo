@@ -133,8 +133,8 @@ button{
     position: fixed;
     left: 50%;
     top: 50%;
-    height: 500px;
-    margin-top: -250px; /* half of you height */
+    height: 400px;
+    margin-top: -200px; /* half of you height */
     width: 400px;
     margin-left: -200px; /* half of you width */
 }
@@ -377,7 +377,7 @@ section{
 }
 
 .mapa img {
-    border-radius: 10px;
+    border-radius: 5px;
     height: 100%;
     width: 100%;
     object-fit: cover;
@@ -390,9 +390,9 @@ section{
     margin: 0;
     padding: 0;
     background-color: var(--mid-blue);
-    border-width: 0px;
-    border-color: rgb(255, 255, 255);
-    box-shadow: 0 0 0 5px #ffffff;
+    border-width: 5px;
+    border-color: #ffffff;
+    box-shadow: 0 0 0 5px #023047;
 }
 .active {
     background-color: #ffb703;

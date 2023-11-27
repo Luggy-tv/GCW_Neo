@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nivel Baño</title>
+    <link rel="stylesheet" href="inicio.css">
     <style>
       html,
       body {
@@ -35,7 +36,10 @@
   </head>
   <body>
     <audio autoplay>
-      <source src="Club Penguin - Pizza Parlor Theme (Charlie's Here) [FULL High Quality].mp3" type="audio/mpeg">
+      <source
+        src="Club Penguin - Pizza Parlor Theme (Charlie's Here) [FULL High Quality].mp3"
+        type="audio/mpeg"
+      />
     </audio>
 
     <canvas id="c"></canvas>
@@ -43,6 +47,23 @@
       <div id="view1" tabindex="1"></div>
       <div id="view3" tabindex="3"></div>
     </div>
+
+    <div id="Popup" style="display: none">
+      <div class="pausamenu">
+        <h3>Pausa</h3>
+        <div class="botones">
+          <!--<a href=""><button>Ajustes</button></a>-->
+          <button onclick = "regresarPopup()">Regresar</button>
+          <a href="index.html"><button class="salir">Salir del juego</button></a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function regresarPopup() { 
+      document.getElementById("Popup").style.display = "none";
+      }
+    </script>
 
     <script type="module">
       //import * as THREE from "https://threejsfundamentals.org/threejs/resources/threejs/r119/build/three.module.js";
@@ -677,6 +698,10 @@
               keys1.right = false;
               break;
 
+            case 80: // p
+              document.getElementById("Popup").style.display = "block";
+              break;
+
             //Arrow Key Up
             case 38:
               keys2.forward = false;
@@ -798,7 +823,7 @@
           if (box.name == "cajaMorada" && MBoxStatus) {
             cajaMorada.position.set(300, 0, 300);
             cajaMoradaBB.setFromObject(cajaMorada);
-            MBoxStatus=false;
+            MBoxStatus = false;
           }
         }
         function resetBox() {
@@ -885,7 +910,7 @@
           //PATO AMARILLO ITEM MORADO
           if (duck1BB.intersectsBox(cajaMoradaBB)) {
             console.log("El equipo amarillo obtuvo el punto extra!");
-            moveBox(cajaMorada,MBoxStatus);
+            moveBox(cajaMorada, MBoxStatus);
           }
           //PATO AMARILLO ITEM VERDE
           if (duck1BB.intersectsBox(cajaVerdeBB)) {
