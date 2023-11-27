@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cuack Game | SNF Singleplayer </title>
-    <link rel="icon" href="Modelos/small-duck.svg">
+    <title>Cuack Game | SNF Singleplayer</title>
+    <link rel="icon" href="Modelos/small-duck.svg" />
     <style>
       html,
       body {
@@ -20,7 +20,9 @@
     </style>
   </head>
   <body>
-    <source src="Club Penguin - Pizza Parlor Theme (Charlie's Here) [FULL High Quality].mp3" type="audio/mpeg">
+    <audio autoplay>
+      <source src="Club Penguin - Pizza Parlor Theme (Charlie's Here) [FULL High Quality].mp3" type="audio/mpeg">
+    </audio>
     <canvas id="c"></canvas>
     <script type="module">
       import * as THREE from "./Modules/three.module.js";
@@ -50,7 +52,7 @@
         const camera = new THREE.PerspectiveCamera(fov, aspect);
         camera.position.set(0, 30, -165);
         const cameraHelper = new THREE.CameraHelper(camera);
-  //Escena
+        //Escena
         const scene = new THREE.Scene();
         scene.background = new THREE.Color("#34495E");
 
@@ -484,7 +486,6 @@
           new THREE.Vector3(-33, 1.5, 37), //12
         ];
 
-
         let cajaVerdePos1 = new THREE.Vector3(40, 1.5, -173);
         let cajaVerdePos2 = new THREE.Vector3(-40, 1.5, 173);
 
@@ -519,8 +520,8 @@
             ]
           );
 
-          mainBox.name ="mainBox";
-          
+          mainBox.name = "mainBox";
+
           scene.add(mainBox);
 
           mainBoxBB.setFromObject(mainBox);
@@ -568,7 +569,6 @@
 
           if (fastEffect) {
             fastEffect = false;
-           
           }
           return duckAccel;
         }
@@ -590,12 +590,16 @@
             cajaVerde2BB.setFromObject(cajaVerde2);
             VBox2Status = false;
           }
-          if(box.name=="mainBox"){
-            mainBox.position.copy(posicionesDisponibles[Math.floor(Math.random() * posicionesDisponibles.length)]);
+          if (box.name == "mainBox") {
+            mainBox.position.copy(
+              posicionesDisponibles[
+                Math.floor(Math.random() * posicionesDisponibles.length)
+              ]
+            );
             mainBoxBB.setFromObject(mainBox);
           }
         }
-        
+
         function resetBox() {
           V1BoxStatus = true;
           V2BoxStatus = true;
@@ -618,16 +622,15 @@
             moveBox(cajaVerde1);
             duck1Accel = fastTarget(duck1Accel);
           }
-          if(duck1BB.intersectsBox(cajaVerde2BB)){
+          if (duck1BB.intersectsBox(cajaVerde2BB)) {
             console.log("Speed UP!");
             moveBox(cajaVerde2);
             duck1Accel = fastTarget(duck1Accel);
           }
-          if(duck1BB.intersectsBox(mainBoxBB)){
+          if (duck1BB.intersectsBox(mainBoxBB)) {
             moveBox(mainBox);
             puntosJ1++;
             console.log("Puntuación:", puntosJ1);
-
           }
         }
 
@@ -681,7 +684,7 @@
           cajaVerde1.rotation.y += intervalo;
           cajaVerde2.rotation.y += intervalo;
         }
-  //Funcion principal de renderizado-------------------------
+        //Funcion principal de renderizado-------------------------
         function render() {
           resizeRendererToDisplaySize(renderer);
 
