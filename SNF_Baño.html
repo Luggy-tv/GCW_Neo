@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Juego</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
+      #c {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="c"></canvas>
+
+    <script type="module">
+      import * as THREE from "./Modules/three.module.js";
+      import { OrbitControls } from "./Modules/OrbitControls.js";
+      import { OBJLoader } from "./Modules/OBJLoader.js";
+      import { MTLLoader } from "./Modules/MtLLoader.js";
+
+      function main() {
+        const canvas = document.querySelector("#c");
+        const renderer = new THREE.WebGLRenderer({ canvas });
+
+        const fov = 60;
+        const aspect = 2;
+
+        let duck1object = new THREE.Group();
+        const duck1BB = new THREE.Box3();
+        const loader = new OBJLoader();
+        const textureLoader = new THREE.TextureLoader();
+
+        const keys1 = {
+          forward: false,
+          backward: false,
+          left: false,
+          right: false,
+        };
+        //Camara1
+        const camera = new THREE.PerspectiveCamera(fov, aspect);
+        camera.position.set(0, 30, -165);
+        const cameraHelper = new THREE.CameraHelper(camera);
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color("#34495E");
+
+        // const orbitcontrols1 = new OrbitControls(camera, canvas);
+        // orbitcontrols1.update();
+
+        //Luces
+        {
+          //Luz Direccional
+          const color = 0xffffff;
+          const intensity = 1;
+          const light = new THREE.DirectionalLight(color, intensity);
+          light.position.set(0, 10, 0);
+          light.target.position.set(-5, 0, 0);
+          scene.add(light);
+          scene.add(light.target);
+
+          //Luz Hemisferica
+          const hemisphereLight = new THREE.HemisphereLight(
+            0xffffbb,
+            0x080820,
+            1
+          );
+          scene.add(hemisphereLight);
+        }
+
+        //-----------Carga de Modelos---------------------------------------------------------------------
+        //Plano de Agua
+        {
+          const planeGeometry = new THREE.PlaneGeometry(50, 50);
+          const planeMaterial = new THREE.MeshStandardMaterial({
+            color: "slategrey",
+          });
+          const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+          plane.position.set(0, -0.5, 0);
+          plane.scale.set(5, 10);
+          plane.receiveShadow = true;
+          plane.rotateX(-Math.PI / 2);
+          scene.add(plane);
+        }
+        //Modelo PATO 1 J1
+        {
+          const duck1Texture = textureLoader.load("./Modelos/PATO/PATO_UV.png");
+          loader.load(
+            "./Modelos/PATO/PATO.obj",
+            function (object) {
+              duck1object = object;
+              const duck1Mat = new THREE.MeshBasicMaterial({
+                map: duck1Texture,
+              });
+              duck1object.traverse(function (child) {
+                if (child instanceof THREE.Mesh) {
+                  child.material = duck1Mat;
+                }
+              });
+
+              duck1object.position.set(0, 0, -160);
+              duck1object.scale.set(2, 2, 2);
+
+              scene.add(duck1object);
+
+              //Duck1BoundingBox
+              duck1BB.setFromObject(duck1object);
+              // const duck1BBHelper = new THREE.Box3Helper(duck1BB, 0xffff00);
+              // scene.add(duck1BBHelper);
+            },
+            function (xhr) {
+              console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Duck1");
+            },
+            function (error) {
+              console.log("An error happened,Duck1");
+            }
+          );
+        }
+        //Bañera
+        {
+          const BaneraTexture = textureLoader.load(
+            "./Modelos/BANERA/BANERA_UV.png"
+          );
+          loader.load(
+            "./Modelos/BANERA/BANERA.obj",
+            function (BANERA) {
+              const BaneraMaterial = new THREE.MeshBasicMaterial({
+                map: BaneraTexture,
+              });
+              BaneraMaterial.castShadow = true;
+              BANERA.traverse(function (child) {
+                if (child instanceof THREE.Mesh) {
+                  child.material = BaneraMaterial;
+                }
+              });
+              BANERA.position.set(0, 0, 0);
+              BANERA.scale.set(40, 40, 40);
+              scene.add(BANERA);
+            },
+            function (xhr) {
+              console.log((xhr.loaded / xhr.total) * 100 + "% loaded Bañera");
+            },
+            function (error) {
+              console.log("An error happened, Bañera");
+            }
+          );
+        }
+        //Barco Jugete
+        {
+          const texture = textureLoader.load(
+            "./Modelos/BARCO_JUGUETE/J_BARCO_UV.png"
+          );
+          loader.load(
+            "./Modelos/BARCO_JUGUETE/J_BARCO.obj",
+            function (BarcoJu) {
+              //BarcoJu = object;
+              const material = new THREE.MeshBasicMaterial({ map: texture });
+              material.castShadow = true;
+              BarcoJu.traverse(function (child) {
+                if (child instanceof THREE.Mesh) {
+                  child.material = material;
+                }
+              });
+              BarcoJu.position.set(0, -2, 0);
+              BarcoJu.scale.set(5, 5, 5);
+              BarcoJu.rotateY(Math.PI / 2);
+              scene.add(BarcoJu);
+            },
+            function (xhr) {
+              console.log((xhr.loaded / xhr.total) * 100 + "% loaded, BarcoJu");
+            },
+            function (error) {
+              console.log("An error happened, BarcoJu");
+            }
+          );
+        }
+        //Barco de Papel
+        {
+          const BarcoPaTextura = textureLoader.load(
+            "./Modelos/BARCO_PAPEL/P_BOAT_Layout.png"
+          );
+          loader.load(
+            "./Modelos/BARCO_PAPEL/P_BARCO.obj",
+            function (BarcoPa) {
+              const BarcoPmaterial = new THREE.MeshBasicMaterial({
+                map: BarcoPaTextura,
+              });
+              BarcoPmaterial.castShadow = true;
+              BarcoPa.traverse(function (child) {
+                if (child instanceof THREE.Mesh) {
+                  child.material = BarcoPmaterial;
+                }
+              });
+              BarcoPa.position.set(60, 0, 70);
+              BarcoPa.scale.set(15, 15, 15);
+              BarcoPa.rotation.y -= THREE.MathUtils.degToRad(45);
+
+              // Enable shadows for the BarcoPa object
+              BarcoPa.castShadow = true;
+
+              scene.add(BarcoPa);
+            },
+
+            function (xhr) {
+              console.log((xhr.loaded / xhr.total) * 100 + "% loaded. BarcoPa");
+            },
+            function (error) {
+              console.log("An error happened. BarcoPa");
+            }
+          );
+        }
+        //Bola Azul
+        {
+          const bolBTextura = textureLoader.load(
+            "./Modelos/BOLA_B/bolaB_3_UV.png"
+          );
+          loader.load(
+            "./Modelos/BOLA_B/bola.obj",
+            function (Bola_Blue) {
+              const materialBolaB = new THREE.MeshBasicMaterial({
+                map: bolBTextura,
+              });
+              materialBolaB.castShadow = true;
+              Bola_Blue.traverse(function (child) {
+                if (child instanceof THREE.Mesh) {
+                  child.material = materialBolaB;
+                }
+              });
+              Bola_Blue.position.set(70, 0, -40);
+              Bola_Blue.scale.set(15, 15, 15);
+
+              // Enable shadows for the Bola_Blue object
+              Bola_Blue.castShadow = true;
+
+              scene.add(Bola_Blue);
+            },
+            function (xhr) {
+              console.log((xhr.loaded / xhr.total) * 100 + "% loaded, Bola_B");
+            },
+            function (error) {
+              console.log("An error happened, Bola_B");
+            }
+          );
+        }
+        //Bola Roja
+        {
+          const bolRTextura = textureLoader.load(
+            "./Modelos/BOLA_R/bolaR_1_UV.png"
+          );
+          loader.load(
+            "./Modelos/BOLA_R/bola.obj",
+            function (Bola_Red) {
+              const materialBolaR = new THREE.MeshBasicMaterial({
+                map: bolRTextura,
+              });
+              materialBolaR.castShadow = true;
+              Bola_Red.traverse(function (child) {
+                if (child instanceof THREE.Mesh) {
+                  child.material = materialBolaR;
+                }
+              });
+              Bola_Red.position.set(-70, 0, 30);
+              Bola_Red.scale.set(18, 18, 18);
+              scene.add(Bola_Red);
+            },
+            function (xhr) {
+              console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Bola_R");
+            },
+            function (error) {
+              console.log("An error happened,Bola_R");
+            }
+          );
+        }
+        //Bola Verde
+        {
+          const bolGTextura = textureLoader.load(
+            "./Modelos/BOLA_G/bolaG_2_UV.png"
+          );
+          loader.load(
+            "./Modelos/BOLA_R/bola.obj",
+            function (Bola_Grn) {
+              const materialBolaG = new THREE.MeshBasicMaterial({
+                map: bolGTextura,
+              });
+              materialBolaG.castShadow = true;
+              Bola_Grn.traverse(function (child) {
+                if (child instanceof THREE.Mesh) {
+                  child.material = materialBolaG;
+                }
+              });
+              Bola_Grn.position.set(35, 0, -78);
+              Bola_Grn.scale.set(15, 15, 15);
+              scene.add(Bola_Grn);
+            },
+            function (xhr) {
+              console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Bola_G");
+            },
+            function (error) {
+              console.log("An error happened,Bola_G");
+            }
+          );
+        }
+        //Tiburon
+        {
+          const sharkTexture = textureLoader.load(
+            "./Modelos/SHARK/shart_UV.png"
+          );
+          loader.load(
+            "./Modelos/SHARK/shark.obj",
+            function (Shark) {
+              const sharkMat = new THREE.MeshBasicMaterial({
+                map: sharkTexture,
+              });
+              sharkMat.castShadow = true;
+              Shark.traverse(function (child) {
+                if (child instanceof THREE.Mesh) {
+                  child.material = sharkMat;
+                }
+              });
+
+              Shark.position.set(-40, 5, -90);
+              Shark.scale.set(15, 15, 15);
+              Shark.rotateY(Math.PI / 3);
+              scene.add(Shark);
+            },
+            function (xhr) {
+              console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Shark");
+            },
+            function (error) {
+              console.log("An error happened,Shark");
+            }
+          );
+        }
+
+        //---Logica de movimiento------------------------------------------------------------------------------
+        document.addEventListener("keydown", (e) => _onKeyDown(e), false);
+        document.addEventListener("keyup", (e) => _onKeyUp(e), false);
+        function _onKeyDown(event) {
+          switch (event.keyCode) {
+            case 87: // w
+              keys1.forward = true;
+              break;
+            case 65: // a
+              keys1.left = true;
+              break;
+            case 83: // s
+              keys1.backward = true;
+              break;
+            case 68: // d
+              keys1.right = true;
+              break;
+
+            case 80: //p
+              console.log("posicion del pato1: ", duck1object.position);
+              break;
+          }
+        }
+
+        function _onKeyUp(event) {
+          switch (event.keyCode) {
+            case 87: // w
+              keys1.forward = false;
+              break;
+            case 65: // a
+              keys1.left = false;
+              break;
+            case 83: // s
+              keys1.backward = false;
+              break;
+            case 68: // d
+              keys1.right = false;
+              break;
+          }
+        }
+
+        function movement(_target, timeInSeconds, keys, accel) {
+          if (!_target) {
+            return;
+          }
+          let decceleration = new THREE.Vector3(-0.0005, -0.0001, -5.0);
+          let acceleration = new THREE.Vector3(1, 0.15, accel);
+          let velocity = new THREE.Vector3(0, 0, 0);
+
+          const frameDecceleration = new THREE.Vector3(
+            velocity.x * decceleration.x,
+            velocity.y * decceleration.y,
+            velocity.z * decceleration.z
+          );
+          frameDecceleration.multiplyScalar(timeInSeconds);
+          frameDecceleration.z =
+            Math.sign(frameDecceleration.z) *
+            Math.min(Math.abs(frameDecceleration.z), Math.abs(velocity.z));
+
+          velocity.add(frameDecceleration);
+          const controlObject = _target;
+          const _Q = new THREE.Quaternion();
+          const _A = new THREE.Vector3();
+          const _R = controlObject.quaternion.clone();
+
+          const acc = acceleration.clone();
+
+          if (keys.forward) {
+            velocity.z += acc.z * timeInSeconds;
+          }
+          if (keys.backward) {
+            velocity.z -= acc.z * timeInSeconds;
+          }
+          if (keys.left) {
+            _A.set(0, 1, 0);
+            _Q.setFromAxisAngle(
+              _A,
+              4.0 * Math.PI * timeInSeconds * acceleration.y
+            );
+            _R.multiply(_Q);
+          }
+          if (keys.right) {
+            _A.set(0, 1, 0);
+            _Q.setFromAxisAngle(
+              _A,
+              4.0 * -Math.PI * timeInSeconds * acceleration.y
+            );
+            _R.multiply(_Q);
+          }
+          controlObject.quaternion.copy(_R);
+
+          const oldPosition = new THREE.Vector3();
+          oldPosition.copy(controlObject.position);
+
+          const forward = new THREE.Vector3(0, 0, 1);
+          forward.applyQuaternion(controlObject.quaternion);
+          forward.normalize();
+
+          const sideways = new THREE.Vector3(1, 0, 0);
+          sideways.applyQuaternion(controlObject.quaternion);
+          sideways.normalize();
+
+          sideways.multiplyScalar(velocity.x * timeInSeconds);
+          forward.multiplyScalar(velocity.z * timeInSeconds);
+
+          controlObject.position.add(forward);
+          controlObject.position.add(sideways);
+
+          oldPosition.copy(controlObject.position);
+        }
+
+        //---Logica de Juego-----------------------------------------------------------------------------------
+        let puntosJ1 = 0;
+
+        let canMove = true;
+
+        let duracionPartida = 90;
+        let tiempoRestante = duracionPartida; //Tiempo en segundos
+        let temporizador;
+
+        const nrmlAccel = 3000;
+        const fastAccel = 5000;
+
+        let duck1Accel = nrmlAccel;
+
+        let fastTick = 0;
+        let fastEffect = false;
+
+        const posicionesDisponibles = [
+          new THREE.Vector3(93, 1.5, 76), //1
+          new THREE.Vector3(-90, 1.5, 55), //2
+          new THREE.Vector3(-12, 1.5, -48), //3
+          new THREE.Vector3(100, 1.5, -68), //4
+          new THREE.Vector3(37, 1.5, 40), //5
+          new THREE.Vector3(-39, 1.5, 128), //6
+          new THREE.Vector3(-117, 1.5, 86), //7
+          new THREE.Vector3(-17, 1.5, -190), //8
+          new THREE.Vector3(40, 1.5, -38), //9
+          new THREE.Vector3(0, 1.5, 184), //10
+          new THREE.Vector3(-78, 1.5, -41), //11
+          new THREE.Vector3(-33, 1.5, 37), //12
+        ];
+
+        let prevPos = new THREE.Vector3(0, 0, 0);
+
+        let cajaVerdePos1 = new THREE.Vector3(40, 1.5, -173);
+        let cajaVerdePos2 = new THREE.Vector3(-40, 1.5, 173);
+
+        //Definicon de Cubos
+
+        let mainBox;
+        let cajaVerde1;
+        let cajaVerde2;
+
+        let mainBoxBB = new THREE.Box3();
+        let cajaVerde1BB = new THREE.Box3();
+        let cajaVerde2BB = new THREE.Box3();
+
+        let cajasrespawn = 0;
+        let VBox1Status = true;
+        let VBox2Status = true;
+
+        //Definicion de cajaVerde y mainBox
+        {
+          const boxGeometry = new THREE.BoxGeometry(4, 4, 4);
+
+          // Dentro de la sección donde defines tus objetos
+          const boxMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffa500,
+          });
+
+          mainBox = new THREE.Mesh(boxGeometry, boxMaterial);
+
+          mainBox.position.copy(
+            posicionesDisponibles[
+              Math.floor(Math.random() * posicionesDisponibles.length)
+            ]
+          );
+
+          mainBox.name ="mainBox";
+          
+          scene.add(mainBox);
+
+          mainBoxBB.setFromObject(mainBox);
+
+          const gBoxMat = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+
+          cajaVerde1 = new THREE.Mesh(boxGeometry, gBoxMat);
+          cajaVerde2 = new THREE.Mesh(boxGeometry, gBoxMat);
+
+          cajaVerde1.position.copy(cajaVerdePos1);
+          cajaVerde2.position.copy(cajaVerdePos2);
+
+          cajaVerde1.name = "cajaVerde1";
+          cajaVerde2.name = "cajaVerde2";
+
+          scene.add(cajaVerde1, cajaVerde2);
+
+          cajaVerde1BB.setFromObject(cajaVerde1);
+          cajaVerde2BB.setFromObject(cajaVerde2);
+        }
+
+        function fastTarget(duckAccel) {
+          let newDuckAccel = duckAccel;
+
+          newDuckAccel = fastAccel;
+          fastEffect = true;
+
+          return newDuckAccel;
+        }
+
+        function fastEffectTimer() {
+          if (fastEffect) {
+            if (fastTick >= 20) {
+              duck1Accel = resetAccel(duck1Accel);
+              fastEffect = false;
+              fastTick = 0;
+            } else {
+              fastTick++;
+            }
+          }
+        }
+
+        function resetAccel(duckAccel) {
+          duckAccel = nrmlAccel;
+
+          if (fastEffect) {
+            fastEffect = false;
+           
+          }
+          return duckAccel;
+        }
+
+        function formatTime(tiempoSegundos) {
+          let minutos = Math.floor(tiempoSegundos / 60);
+          let segundos = tiempoSegundos % 60;
+          return `${minutos}:${segundos < 10 ? "0" : ""}${segundos}`;
+        }
+
+        function moveBox(box) {
+          if (box.name == "cajaVerde1") {
+            cajaVerde1.position.set(300, 0, 300);
+            cajaVerde1BB.setFromObject(cajaVerde1);
+            VBox1Status = false;
+          }
+          if (box.name == "cajaVerde2") {
+            cajaVerde2.position.set(300, 0, 300);
+            cajaVerde2BB.setFromObject(cajaVerde2);
+            VBox2Status = false;
+          }
+          if(box.name=="mainBox"){
+            mainBox.position.copy(posicionesDisponibles[Math.floor(Math.random() * posicionesDisponibles.length)]);
+            mainBoxBB.setFromObject(mainBox);
+          }
+        }
+        
+        function resetBox() {
+          V1BoxStatus = true;
+          V2BoxStatus = true;
+          cajaVerde1.position.copy(cajaVerdePos1);
+          cajaVerde2.position.copy(cajaVerdePos2);
+          cajaVerde1BB.setFromObject(cajaVerde1);
+          cajaVerde2BB.setFromObject(cajaVerde2);
+        }
+
+        function iniciarTemporizador() {
+          temporizador = setInterval(function () {
+            tiempoRestante--;
+            fastEffectTimer();
+          }, 1000);
+        }
+
+        function checkCollisions() {
+          if (duck1BB.intersectsBox(cajaVerde1BB)) {
+            console.log("Speed UP!");
+            moveBox(cajaVerde1);
+            duck1Accel = fastTarget(duck1Accel);
+          }
+          if(duck1BB.intersectsBox(cajaVerde2BB)){
+            console.log("Speed UP!");
+            moveBox(cajaVerde2);
+            duck1Accel = fastTarget(duck1Accel);
+          }
+          if(duck1BB.intersectsBox(mainBoxBB)){
+            moveBox(mainBox);
+            puntosJ1++;
+            console.log("Puntuación:", puntosJ1);
+
+          }
+        }
+
+        function gameLogic() {
+          if (tiempoRestante >= 0) {
+            console.log("Tiempo restante: " + formatTime(tiempoRestante));
+            checkCollisions();
+          } else {
+            clearInterval(temporizador);
+            temporizador = undefined;
+            canMove = false;
+          }
+        }
+
+        iniciarTemporizador();
+
+        //---Logica de Render----------------------------------------------------------------------------------
+
+        function resizeRendererToDisplaySize(renderer) {
+          const canvas = renderer.domElement;
+          const width = canvas.clientWidth;
+          const height = canvas.clientHeight;
+          const needResize = canvas.width !== width || canvas.height !== height;
+          if (needResize) {
+            renderer.setSize(width, height, false);
+          }
+          return needResize;
+        }
+
+        function updateCamera(camera, duck) {
+          const duckDirection = new THREE.Vector3(0, 0, 1);
+
+          duckDirection.applyQuaternion(duck.quaternion);
+          duckDirection.normalize();
+
+          const cameraDistance = 20;
+
+          const cameraHeight = 5;
+
+          const cameraPosition = duck.position
+            .clone()
+            .addScaledVector(duckDirection, -cameraDistance)
+            .add(new THREE.Vector3(0, cameraHeight, 0));
+          camera.position.copy(cameraPosition);
+          camera.lookAt(duck.position);
+        }
+
+        function girarItems() {
+          let intervalo = 0.1;
+          mainBox.rotation.y += intervalo;
+          cajaVerde1.rotation.y += intervalo;
+          cajaVerde2.rotation.y += intervalo;
+        }
+
+        function render() {
+          resizeRendererToDisplaySize(renderer);
+
+          scene.background.set("#34495E");
+          girarItems();
+
+          // render
+          renderer.render(scene, camera);
+
+          if (duck1object) {
+            updateCamera(camera, duck1object);
+          }
+          if (canMove) {
+            movement(duck1object, 0.016, keys1, duck1Accel);
+          }
+          duck1BB.setFromObject(duck1object);
+          gameLogic();
+
+          requestAnimationFrame(render);
+        }
+        requestAnimationFrame(render);
+      }
+      main();
+    </script>
+  </body>
+</html>
