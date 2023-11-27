@@ -39,6 +39,7 @@
       <div id="view1" tabindex="1"></div>
       <div id="view3" tabindex="3"></div>
     </div>
+
     <script type="module">
       //import * as THREE from "https://threejsfundamentals.org/threejs/resources/threejs/r119/build/three.module.js";
       //import { OrbitControls } from "https://threejsfundamentals.org/threejs/resources/threejs/r119/examples/jsm/controls/OrbitControls.js";
@@ -79,12 +80,15 @@
           new THREE.Vector3(130, 10, 0.5)
         );
 
-        // const sharkBB = new THREE.Box3();
-        // const BarcoJuBB = new THREE.Box3();
-        // const BarcoPapelBB = new THREE.Box3();
-        // const ballBlueBB = new THREE.Sphere();
-        // const ballRedBB = new THREE.Sphere();
-        // const ballGreenBB = new THREE.Sphere();
+        let cajaMorada;
+        let cajaVerde;
+        let cajaGris;
+
+        let cajaMoradaBB;
+        let cajaVerdeBB;
+        let cajaGrisBB;
+
+        let pausa;
 
         const loader = new OBJLoader();
         const textureLoader = new THREE.TextureLoader();
@@ -112,10 +116,6 @@
         const camera3 = new THREE.PerspectiveCamera(fov, aspect);
         camera3.position.set(0, 30, 165);
         const camera3Helper = new THREE.CameraHelper(camera3);
-
-        const controls3 = new OrbitControls(camera3, view3Elem);
-        controls3.target.set(0, 5, 0);
-        controls3.update();
 
         //Escena
         const scene = new THREE.Scene();
@@ -169,9 +169,9 @@
 
           goalJ2BB.translate(new THREE.Vector3(0, 0, 150));
 
-          const goalJ2BBHelper = new THREE.Box3Helper(goalJ2BB, 0xff0000);
+          // const goalJ2BBHelper = new THREE.Box3Helper(goalJ2BB, 0xff0000);
 
-          scene.add(goalJ2BBHelper);
+          // scene.add(goalJ2BBHelper);
         }
         //Base / Cubo de J1
         {
@@ -185,9 +185,9 @@
 
           goalJ1BB.translate(new THREE.Vector3(0, 0, -150));
 
-          const goalJ1BBHelper = new THREE.Box3Helper(goalJ1BB, 0xffff00);
+          // const goalJ1BBHelper = new THREE.Box3Helper(goalJ1BB, 0xffff00);
 
-          scene.add(goalJ1BBHelper);
+          // scene.add(goalJ1BBHelper);
         }
         //Modelo PATO 1 J1
         {
@@ -212,8 +212,8 @@
 
               //Duck1BoundingBox
               duck1BB.setFromObject(duck1object);
-              const duck1BBHelper = new THREE.Box3Helper(duck1BB, 0xffff00);
-              scene.add(duck1BBHelper);
+              // const duck1BBHelper = new THREE.Box3Helper(duck1BB, 0xffff00);
+              // scene.add(duck1BBHelper);
             },
             function (xhr) {
               console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Duck1");
@@ -249,8 +249,8 @@
 
               //Duck2BoundingBox
               duck2BB.setFromObject(duck2object);
-              const duck2BBHelper = new THREE.Box3Helper(duck2BB, "red");
-              scene.add(duck2BBHelper);
+              // const duck2BBHelper = new THREE.Box3Helper(duck2BB, "red");
+              // scene.add(duck2BBHelper);
             },
             function (xhr) {
               console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Duck2");
@@ -260,6 +260,64 @@
             }
           );
         }
+        //Modelo de Item
+        {
+          const materialMorado = new THREE.MeshBasicMaterial({
+            color: 0x800080,
+          });
+          const materialVerde = new THREE.MeshBasicMaterial({
+            color: 0x00ff00,
+          });
+          const materialGris = new THREE.MeshBasicMaterial({ color: 0x808080 });
+
+          const geometriaCaja = new THREE.BoxGeometry(4, 4, 4);
+
+          cajaMorada = new THREE.Mesh(geometriaCaja, materialMorado);
+          cajaVerde = new THREE.Mesh(geometriaCaja, materialVerde);
+          cajaGris = new THREE.Mesh(geometriaCaja, materialGris);
+
+          const posicionesDisponibles = [
+            new THREE.Vector3(76, 2, -80),
+            new THREE.Vector3(49, 2, 21),
+            new THREE.Vector3(-70, 2, 78),
+          ];
+
+          function obtenerPosicionAleatoria(ocupadas) {
+            const posicionesLibres = posicionesDisponibles.filter(
+              (pos) => !ocupadas.some((ocupada) => pos.equals(ocupada))
+            );
+
+            if (posicionesLibres.length > 0) {
+              const posicionSeleccionada =
+                posicionesLibres[
+                  Math.floor(Math.random() * posicionesLibres.length)
+                ];
+              return posicionSeleccionada;
+            } else {
+              return null;
+            }
+          }
+
+          const posicionCaja1 = obtenerPosicionAleatoria([]);
+          const posicionCaja2 = obtenerPosicionAleatoria([posicionCaja1]);
+          const posicionCaja3 = obtenerPosicionAleatoria([
+            posicionCaja1,
+            posicionCaja2,
+          ]);
+
+          cajaMorada.position.copy(posicionCaja1);
+          cajaVerde.position.copy(posicionCaja2);
+          cajaGris.position.copy(posicionCaja3);
+
+          cajaMoradaBB = new THREE.Box3().setFromObject(cajaMorada);
+          cajaVerdeBB = new THREE.Box3().setFromObject(cajaVerde);
+          cajaGrisBB = new THREE.Box3().setFromObject(cajaGris);
+
+          scene.add(cajaMorada);
+          scene.add(cajaVerde);
+          scene.add(cajaGris);
+        }
+
         //Bañera
         {
           const BaneraTexture = textureLoader.load(
@@ -499,11 +557,11 @@
 
               //Bandera1 BB
               bandera1BB.setFromObject(bandera1object);
-              const bandera1BBHelper = new THREE.Box3Helper(
-                bandera1BB,
-                0xffff00
-              );
-              scene.add(bandera1BBHelper);
+              // const bandera1BBHelper = new THREE.Box3Helper(
+              //   bandera1BB,
+              //   0xffff00
+              // );
+              // scene.add(bandera1BBHelper);
             },
             function (xhr) {
               console.log(
@@ -538,8 +596,8 @@
               scene.add(bandera2object);
               //Bandera2 BB
               bandera2BB.setFromObject(bandera2object);
-              const bandera2BBHelper = new THREE.Box3Helper(bandera2BB, "red");
-              scene.add(bandera2BBHelper);
+              // const bandera2BBHelper = new THREE.Box3Helper(bandera2BB, "red");
+              // scene.add(bandera2BBHelper);
             },
             function (xhr) {
               console.log(
@@ -552,15 +610,13 @@
           );
         }
 
-        
-      
         //---Logica de movimiento------------------------------------------------------------------------------
-        const nrmlAccel = 3000;
+        const nrmlAccel = 2000;
         const fastAccel = 5000;
         const slowAccel = 1000;
-        
-        const duck1Accel= 0;
-        const duck2Accel= 0;
+
+        let duck1Accel = nrmlAccel;
+        let duck2Accel = nrmlAccel;
 
         document.addEventListener("keydown", (e) => _onKeyDown(e), false);
         document.addEventListener("keyup", (e) => _onKeyUp(e), false);
@@ -578,6 +634,10 @@
               break;
             case 68: // d
               keys1.right = true;
+              break;
+
+            case 80: //p
+              console.log("Pausa ", pausa);
               break;
 
             //Arrow Key Up
@@ -717,13 +777,39 @@
         const flag1Originpos = new THREE.Vector3(0, 0, -180);
         const flag2Originpos = new THREE.Vector3(0, 0, 180);
 
-        let duracionPartida = 15;
+        let duracionPartida = 90;
         let tiempoRestante = duracionPartida; //Tiempo en segundos
         let temporizador;
+        let cajasrespawn = 0;
 
+        cajaMorada.name = "cajaMorada";
+        cajaVerde.name = "cajaVerde";
+        cajaGris.name = "cajaGris";
+
+        let MBoxStatus = true;
+        let VBoxStatus = true;
+        let GBoxStatus = true;
+
+        function moveBox(box, flag) {
+          if (box.name == "cajaMorada" && MBoxStatus) {
+            cajaMorada.position.set(300, 0, 300);
+            cajaMoradaBB.setFromObject(cajaMorada);
+            MBoxStatus=false;
+          }
+        }
+        function resetBox() {
+          cajaMorada.position.copy(posicionCaja1);
+        }
         function iniciarTemporizador() {
           temporizador = setInterval(function () {
             tiempoRestante--;
+
+            if (cajasrespawn >= 30) {
+              resetBox();
+              cajasrespawn = 0;
+            } else {
+              cajasrespawn++;
+            }
           }, 1000);
         }
 
@@ -758,7 +844,6 @@
             console.log("La bandera amarilla esta en posesion del equipo rojo");
             flag1followsDuck2 = true;
           }
-
           //Colision PATO AMARILLO con BASE AMARILLA
           if (duck1BB.intersectsBox(goalJ1BB) && bandera2Captured) {
             bandera2Captured = false;
@@ -773,7 +858,6 @@
             flag2followsDuck1 = false;
             resetFlagPos(bandera2object, flag2Originpos);
           }
-
           //Colision PATO ROJO CON BASE ROJA
           if (duck2BB.intersectsBox(goalJ2BB) && bandera1Captured) {
             bandera1Captured = false;
@@ -788,13 +872,24 @@
             flag1followsDuck2 = false;
             resetFlagPos(bandera1object, flag1Originpos);
           }
-
           if (flag1followsDuck2) {
             followDuck(bandera1object, duck2object);
           }
-
           if (flag2followsDuck1) {
             followDuck(bandera2object, duck1object);
+          }
+          //PATO AMARILLO ITEM MORADO
+          if (duck1BB.intersectsBox(cajaMoradaBB)) {
+            console.log("El equipo amarillo obtuvo el punto extra!");
+            moveBox(cajaMorada,MBoxStatus);
+          }
+          //PATO AMARILLO ITEM VERDE
+          if (duck1BB.intersectsBox(cajaVerdeBB)) {
+            console.log("Colision con la caja verde");
+          }
+          //PATO AMARILLO ITEM GRIS
+          if (duck1BB.intersectsBox(cajaGrisBB)) {
+            console.log("Colision con la caja gris");
           }
         }
 
@@ -828,7 +923,7 @@
           }
         }
 
-        iniciarTemporizador();
+        // iniciarTemporizador();
 
         //---Logica de Render----------------------------------------------------------------------------------
         function resizeRendererToDisplaySize(renderer) {
@@ -884,12 +979,21 @@
           camera.lookAt(duck.position);
         }
 
+        function girarItems() {
+          let intervalo = 0.1;
+          cajaMorada.rotation.y += intervalo;
+          cajaVerde.rotation.y += intervalo;
+          cajaGris.rotation.y -= intervalo / 2;
+        }
+
         //Funcion principal de renderizado-------------------------
         function render() {
           resizeRendererToDisplaySize(renderer);
 
           // turn on the scissor
           renderer.setScissorTest(true);
+
+          girarItems();
 
           // render the original view
           {
@@ -933,13 +1037,13 @@
             updateCamera(camera, duck1object);
           }
 
-          // if (duck2object) {
-          //   updateCamera(camera3, duck2object);
-          // }
+          if (duck2object) {
+            updateCamera(camera3, duck2object);
+          }
 
           if (canMove) {
-            movement(duck1object, 0.016, keys1, 3000);
-            movement(duck2object, 0.016, keys2, 3000);
+            movement(duck1object, 0.016, keys1, duck1Accel);
+            movement(duck2object, 0.016, keys2, duck2Accel);
           }
 
           //Actualizar los movimientos de las cajas

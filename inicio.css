@@ -9,7 +9,12 @@
 }
 
 body#inicio{
-    background-color: #8ecae6;
+    background-image: url("duckIlustPNG.png");
+    background-size:cover;
+    background-repeat: no-repeat;
+
+    overflow: hidden; 
+
 }
 
 body#pausa{
@@ -18,6 +23,39 @@ body#pausa{
 
 body#settings{
     background-color: #8ecae6;
+}
+
+body#lobby{
+    background-color: #023047;
+}
+
+body#puntuaciones{
+    background-color: #219ebc;
+}
+
+h1{
+    font-size: 30px;
+    font-family: 'bubbleboddy', sans-serif;
+    color: #ffffff;
+    margin: 0;
+}
+
+h2{
+    font-size: 30px;
+    font-family: 'bubbleboddy', sans-serif;
+    color: #ffffff;
+    text-shadow:0 0 5px #023047;
+
+    margin: 0;
+    padding: 1rem;
+}
+
+h3{
+    font-size: 40px;
+    font-family: 'bubbleboddy', sans-serif;
+    color: #ffffff;
+    height: 40px;
+    margin-top: 50px;
 }
 
 .main{
@@ -30,11 +68,12 @@ body#settings{
 }
 
 .logo{
-    font-size: 100px;
+    font-size: 130px;
     font-family: 'bubbleboddy', sans-serif;
-    margin: 0;
+    margin: -30px;
     color: #fb8500;
     -webkit-text-stroke: 5px #fff;
+
 }
 
 .subtitulo{
@@ -65,6 +104,7 @@ button{
     border-width: 5px;
     border-color: rgb(255, 255, 255);
     box-shadow: 0 0 0 5px #023047;
+    cursor: pointer;
 }
 
 .salir{
@@ -122,15 +162,6 @@ button{
 
 #juego{
     background-color: #8ecae6;
-}
-
-h3{
-    font-size: 40px;
-    font-family: 'bubbleboddy', sans-serif;
-    color: #ffffff;
-    height: 40px;
-    margin-top: 50px;
-
 }
 
 .box{
@@ -212,3 +243,240 @@ article{
     height: 100%;
 }
 
+.lobby{
+    background-color: #8ecae6; 
+    border-radius: 30px;
+    height: 97vh;
+    border-radius: 10px;
+}
+
+.lobbyText{
+    color: #023047;
+    font-family:Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding-top: 30px;
+}
+
+.lobbyDiv{
+    width: 50%;
+    height: 100%; 
+    margin-bottom:auto;
+    float: right
+}
+
+section{
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+#modo{
+    text-align: center;
+    height: 50%;
+}
+
+#dificultad{
+    text-align: center;
+    height: 50%;
+}
+
+#mapa{
+    text-align: center;
+    height: 70%;
+}
+
+#botonComenzar{
+    height: 30%;
+}
+
+.botonComenzar{
+    color: white;
+    font-family: 'bubbleboddy', sans-serif;
+    font-size: 5vh;
+    text-shadow:0 0 5px #023047;
+    width: 60%;
+    height: 30%;
+    margin: 0;
+
+    background-color: #fb8500;
+    border-radius: 20px;
+    border-style:solid;
+    border-width: 5px;
+    border-color: rgb(255, 255, 255);
+    box-shadow: 0 0 0 5px #ffb703;
+
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 20%;
+}
+
+.salirLobby{
+    color: white;
+    font-family: 'bubbleboddy', sans-serif;
+    font-size: 4vh;
+
+    text-shadow:0 0 5px #023047;
+    width: 50%;
+    height: 20%;
+
+
+    background-color: #8ecae6;
+    border-radius: 20px;
+    border-style:solid;
+    border-width: 0px;
+    border-color: rgb(255, 255, 255);
+    box-shadow: 0 0 0 5px #8ecae6;
+
+
+
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 10%;
+}
+
+.botonModo{
+    color: white;
+    font-family: 'bubbleboddy', sans-serif;
+    font-size: 5vh;
+    width: 50%;
+    height: 25%;
+    margin: 3vh;
+
+    background-color: #219ebc;
+    border-radius: 20px;
+    border-style:solid;
+    border-width: 5px;
+    border-color: rgb(255, 255, 255);
+
+}
+
+.botonDificultad{
+    color: white;
+    font-family: 'bubbleboddy', sans-serif;
+    font-size: 5vh;
+    width: 50%;
+    height: 25%;
+    margin: 3vh;
+
+    background-color: #219ebc;
+    border-radius: 20px;
+    border-style:solid;
+    border-width: 5px;
+    border-color: rgb(255, 255, 255);
+
+}
+
+.mapa{
+    border-radius: 20px;
+    width: 25%;
+    height: 50vh; 
+    float: right;
+    margin: 4%;
+    background-color: #ffffff;
+}
+
+.mapa img {
+    border-radius: 10px;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.imgBtn{
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: var(--mid-blue);
+    border-width: 0px;
+    border-color: rgb(255, 255, 255);
+    box-shadow: 0 0 0 5px #ffffff;
+}
+.active {
+    background-color: #ffb703;
+    box-shadow: 0 0 0 5px #ffb703;
+}
+
+*:disabled{
+    opacity: 50%;
+
+}
+
+.puntuaciones{
+    border-radius: 10px;
+
+    height: 90%;
+    width: 80%;
+
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+
+}
+
+#tablero{
+    text-align: center;
+    height: 80%;
+}
+
+#botonPuntuaciones{
+    text-align: center;
+    height: 20%;
+}
+
+.tableroDiv{
+    margin: 0;
+    background-color: #8ecae6;
+    
+
+    width: 70%;
+    height: 100%;
+    border-radius: 20px;
+    box-shadow: 0 0 0 5px #023047;
+
+    border-style:solid;
+    border-width: 5px;
+    border-color: #ffffff;
+
+
+    position: relative;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+table{
+    width: 80%;
+    height: auto;
+
+    margin: 0 10% 10% 10%;
+}
+
+.header{
+    background-color: #023047;
+    color: #ffffff;
+    font-family: Arial, Helvetica, sans-serif;
+
+    padding: 1%;
+}
+
+#jugador{
+    width: 70%;
+    text-align: left;
+    padding: 1%;
+    padding-left: 5%;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: medium;
+
+}
+
+#puntaje{
+    width: 30%;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: medium;
+
+}
