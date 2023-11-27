@@ -20,8 +20,8 @@
     </style>
   </head>
   <body>
+    <source src="Club Penguin - Pizza Parlor Theme (Charlie's Here) [FULL High Quality].mp3" type="audio/mpeg">
     <canvas id="c"></canvas>
-
     <script type="module">
       import * as THREE from "./Modules/three.module.js";
       import { OrbitControls } from "./Modules/OrbitControls.js";
@@ -50,7 +50,7 @@
         const camera = new THREE.PerspectiveCamera(fov, aspect);
         camera.position.set(0, 30, -165);
         const cameraHelper = new THREE.CameraHelper(camera);
-
+  //Escena
         const scene = new THREE.Scene();
         scene.background = new THREE.Color("#34495E");
 
@@ -360,7 +360,7 @@
               break;
 
             case 80: //p
-              console.log("posicion del pato1: ", duck1object.position);
+              console.log("Pausa ");
               break;
           }
         }
@@ -484,7 +484,6 @@
           new THREE.Vector3(-33, 1.5, 37), //12
         ];
 
-        let prevPos = new THREE.Vector3(0, 0, 0);
 
         let cajaVerdePos1 = new THREE.Vector3(40, 1.5, -173);
         let cajaVerdePos2 = new THREE.Vector3(-40, 1.5, 173);
@@ -682,7 +681,7 @@
           cajaVerde1.rotation.y += intervalo;
           cajaVerde2.rotation.y += intervalo;
         }
-
+  //Funcion principal de renderizado-------------------------
         function render() {
           resizeRendererToDisplaySize(renderer);
 
