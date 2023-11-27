@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cuack Game | CTF Muliplayer </title>
+    <title>Cuack Game | CTF Muliplayer</title>
     <link rel="icon" href="Modelos/small-duck.svg">
     <style>
       html,
@@ -38,13 +38,11 @@
     <audio autoplay>
       <source src="Club Penguin - Pizza Parlor Theme (Charlie's Here) [FULL High Quality].mp3" type="audio/mpeg">
     </audio>
-
     <canvas id="c"></canvas>
     <div class="split">
       <div id="view1" tabindex="1"></div>
       <div id="view3" tabindex="3"></div>
     </div>
-
     <script type="module">
       import * as THREE from "./Modules/three.module.js";
       import { OrbitControls } from "./Modules/OrbitControls.js";
@@ -95,8 +93,6 @@
         let posicionCaja2;
         let posicionCaja3;
 
-        let pausa;
-
         const loader = new OBJLoader();
         const textureLoader = new THREE.TextureLoader();
 
@@ -123,6 +119,10 @@
         const camera3 = new THREE.PerspectiveCamera(fov, aspect);
         camera3.position.set(0, 30, 165);
         const camera3Helper = new THREE.CameraHelper(camera3);
+
+        const controls3 = new OrbitControls(camera3, view3Elem);
+        controls3.target.set(0, 5, 0);
+        controls3.update();
 
         //Escena
         const scene = new THREE.Scene();
@@ -153,11 +153,11 @@
 
         //-----------Carga de Modelos---------------------------------------------------------------------
 
-        //Plano de Agua
+        //Plano de Agua     
         {
           const planeGeometry = new THREE.PlaneGeometry(50, 50);
           const planeMaterial = new THREE.MeshStandardMaterial({
-            color: "slategrey",
+            color: "#0C5E58",
           });
           const plane = new THREE.Mesh(planeGeometry, planeMaterial);
           plane.position.set(0, -0.5, 0);
@@ -166,7 +166,7 @@
           plane.rotateX(-Math.PI / 2);
           scene.add(plane);
         }
-        //Base / Cubo de J2
+        //Base / Cubo de J2     NO TOCAR
         {
           const cube1Geometry = new THREE.BoxGeometry(233, 1, 1);
           const cube1Material = new THREE.MeshBasicMaterial({ color: "red" });
@@ -177,10 +177,9 @@
           goalJ2BB.translate(new THREE.Vector3(0, 0, 150));
 
           // const goalJ2BBHelper = new THREE.Box3Helper(goalJ2BB, 0xff0000);
-
           // scene.add(goalJ2BBHelper);
         }
-        //Base / Cubo de J1
+        //Base / Cubo de J1     NO TOCAR
         {
           const cube1Geometry = new THREE.BoxGeometry(233, 1, 1);
           const cube1Material = new THREE.MeshBasicMaterial({
@@ -193,10 +192,9 @@
           goalJ1BB.translate(new THREE.Vector3(0, 0, -150));
 
           // const goalJ1BBHelper = new THREE.Box3Helper(goalJ1BB, 0xffff00);
-
           // scene.add(goalJ1BBHelper);
         }
-        //Modelo PATO 1 J1
+        //Modelo PATO 1 J1      NO TOCAR
         {
           const duck1Texture = textureLoader.load("./Modelos/PATO/PATO_UV.png");
           loader.load(
@@ -230,7 +228,7 @@
             }
           );
         }
-        //Modelo PATO 2 J2
+        //Modelo PATO 2 J2      NO TOCAR
         {
           const duck2Texture = textureLoader.load(
             "./Modelos/PATO2/PATO_ROJO.png"
@@ -267,8 +265,8 @@
             }
           );
         }
-        //Modelo de Item
-        {
+         //Modelo de Item
+         {
           const materialMorado = new THREE.MeshBasicMaterial({
             color: 0x800080,
           });
@@ -324,223 +322,262 @@
           scene.add(cajaVerde);
           scene.add(cajaGris);
         }
-
-        //Bañera
+        //SWAMP FLOOR
         {
-          const BaneraTexture = textureLoader.load(
-            "./Modelos/BANERA/BANERA_UV.png"
+          const SwampTexture = textureLoader.load(
+            "./Modelos/SWAMP_FLOOR/SAMP_FLOOR_UV.png"
           );
           loader.load(
-            "./Modelos/BANERA/BANERA.obj",
-            function (BANERA) {
-              const BaneraMaterial = new THREE.MeshBasicMaterial({
-                map: BaneraTexture,
+            "./Modelos/SWAMP_FLOOR/SAMP_FLOOR.obj",
+            function (SAMP) {
+              const SwampMaterial = new THREE.MeshBasicMaterial({
+                map: SwampTexture,
               });
-              BaneraMaterial.castShadow = true;
-              BANERA.traverse(function (child) {
+              SwampMaterial.castShadow = true;
+              SAMP.traverse(function (child) {
                 if (child instanceof THREE.Mesh) {
-                  child.material = BaneraMaterial;
+                  child.material = SwampMaterial;
                 }
               });
-              BANERA.position.set(0, 0, 0);
-              BANERA.scale.set(40, 40, 40);
-              scene.add(BANERA);
+              SAMP.position.set(0, 15, 0);
+              SAMP.scale.set(40, 40, 40);
+              scene.add(SAMP);
             },
             function (xhr) {
-              console.log((xhr.loaded / xhr.total) * 100 + "% loaded Bañera");
+              console.log((xhr.loaded / xhr.total) * 100 + "% loaded Swamp Floor");
             },
             function (error) {
-              console.log("An error happened, Bañera");
+              console.log("An error happened, Swamp Floor");
             }
           );
         }
-        //Barco Jugete
+        //SWAMP SKY
         {
-          const texture = textureLoader.load(
-            "./Modelos/BARCO_JUGUETE/J_BARCO_UV.png"
+          const skyTexture = textureLoader.load(
+            "./Modelos/SWAMP_SKY/SWAMP_SKY_2.png"
           );
           loader.load(
-            "./Modelos/BARCO_JUGUETE/J_BARCO.obj",
-            function (BarcoJu) {
-              //BarcoJu = object;
-              const material = new THREE.MeshBasicMaterial({ map: texture });
-              material.castShadow = true;
-              BarcoJu.traverse(function (child) {
+            "./Modelos/SWAMP_SKY/SWAMP_SKY.obj",
+            function (sky) {
+              const skyMaterial = new THREE.MeshBasicMaterial({
+                map: skyTexture,
+              });
+              skyMaterial.castShadow = true;
+              sky.traverse(function (child) {
                 if (child instanceof THREE.Mesh) {
-                  child.material = material;
+                  child.material = skyMaterial;
                 }
               });
-              BarcoJu.position.set(0, -2, 0);
-              BarcoJu.scale.set(5, 5, 5);
-              BarcoJu.rotateY(Math.PI / 2);
-              scene.add(BarcoJu);
+              sky.position.set(0, 15, 0);
+              sky.scale.set(40, 40, 40);
+              scene.add(sky);
             },
             function (xhr) {
-              console.log((xhr.loaded / xhr.total) * 100 + "% loaded, BarcoJu");
+              console.log((xhr.loaded / xhr.total) * 100 + "% loaded Swamp Sky");
             },
             function (error) {
-              console.log("An error happened, BarcoJu");
+              console.log("An error happened, Swamp Sky");
             }
           );
         }
-        //Barco de Papel
+        // LOG
         {
-          const BarcoPaTextura = textureLoader.load(
-            "./Modelos/BARCO_PAPEL/P_BOAT_Layout.png"
+          const Logtexture = textureLoader.load(
+            "./Modelos/LOG/LOG_UV.png"
           );
           loader.load(
-            "./Modelos/BARCO_PAPEL/P_BARCO.obj",
-            function (BarcoPa) {
-              const BarcoPmaterial = new THREE.MeshBasicMaterial({
-                map: BarcoPaTextura,
-              });
-              BarcoPmaterial.castShadow = true;
-              BarcoPa.traverse(function (child) {
+            "./Modelos/LOG/LOG.obj",
+            function (Log) {
+              //Log = object;
+              const Logmaterial = new THREE.MeshBasicMaterial({ map: Logtexture });
+              Logmaterial.castShadow = true;
+              Log.traverse(function (child) {
                 if (child instanceof THREE.Mesh) {
-                  child.material = BarcoPmaterial;
+                  child.material = Logmaterial;
                 }
               });
-              BarcoPa.position.set(60, 0, 70);
-              BarcoPa.scale.set(15, 15, 15);
-              BarcoPa.rotation.y -= THREE.MathUtils.degToRad(45);
-
-              // Enable shadows for the BarcoPa object
-              BarcoPa.castShadow = true;
-
-              scene.add(BarcoPa);
+              Log.position.set(0, -2, 0);
+              Log.scale.set(5, 5, 5);
+              Log.rotateY(Math.PI / 2);
+              scene.add(Log);
             },
-
             function (xhr) {
-              console.log((xhr.loaded / xhr.total) * 100 + "% loaded. BarcoPa");
+              console.log((xhr.loaded / xhr.total) * 100 + "% loaded, Log");
             },
             function (error) {
-              console.log("An error happened. BarcoPa");
+              console.log("An error happened, Log");
             }
           );
         }
-        //Bola Azul
+        //Roca
         {
-          const bolBTextura = textureLoader.load(
-            "./Modelos/BOLA_B/bolaB_3_UV.png"
+          const RockTextura = textureLoader.load(
+            "./Modelos/ROCK/ROCK_UV.png"
           );
           loader.load(
-            "./Modelos/BOLA_B/bola.obj",
-            function (Bola_Blue) {
-              const materialBolaB = new THREE.MeshBasicMaterial({
-                map: bolBTextura,
+            "./Modelos/ROCK/ROCK.obj",
+            function (Rock) {
+              const Rockmaterial = new THREE.MeshBasicMaterial({
+                map: RockTextura,
               });
-              materialBolaB.castShadow = true;
-              Bola_Blue.traverse(function (child) {
+              Rockmaterial.castShadow = true;
+              Rock.traverse(function (child) {
                 if (child instanceof THREE.Mesh) {
-                  child.material = materialBolaB;
+                  child.material = Rockmaterial;
                 }
               });
-              Bola_Blue.position.set(70, 0, -40);
-              Bola_Blue.scale.set(15, 15, 15);
+              Rock.position.set(60, 0, 70);
+              Rock.scale.set(15, 15, 15);
+              Rock.rotation.y -= THREE.MathUtils.degToRad(45);
 
-              // Enable shadows for the Bola_Blue object
-              Bola_Blue.castShadow = true;
+              // Enable shadows for the Rock object
+              Rock.castShadow = true;
 
-              scene.add(Bola_Blue);
+              scene.add(Rock);
             },
+
             function (xhr) {
-              console.log((xhr.loaded / xhr.total) * 100 + "% loaded, Bola_B");
+              console.log((xhr.loaded / xhr.total) * 100 + "% loaded. Rock");
             },
             function (error) {
-              console.log("An error happened, Bola_B");
+              console.log("An error happened. Rock");
             }
           );
         }
-        //Bola Roja
+        //Tortuga 1
         {
-          const bolRTextura = textureLoader.load(
-            "./Modelos/BOLA_R/bolaR_1_UV.png"
+          const turtTextura = textureLoader.load(
+            "./Modelos/TURTLE/TURTLE_UV.png"
           );
           loader.load(
-            "./Modelos/BOLA_R/bola.obj",
-            function (Bola_Red) {
-              const materialBolaR = new THREE.MeshBasicMaterial({
-                map: bolRTextura,
+            "./Modelos/TURTLE/TURTLE.obj",
+            function (Turtle) {
+              const materialTurtle = new THREE.MeshBasicMaterial({
+                map: turtTextura,
               });
-              materialBolaR.castShadow = true;
-              Bola_Red.traverse(function (child) {
+              materialTurtle.castShadow = true;
+              Turtle.traverse(function (child) {
                 if (child instanceof THREE.Mesh) {
-                  child.material = materialBolaR;
+                  child.material = materialTurtle;
                 }
               });
-              Bola_Red.position.set(-70, 0, 30);
-              Bola_Red.scale.set(18, 18, 18);
-              scene.add(Bola_Red);
+              Turtle.position.set(70, 0, -40);
+              Turtle.scale.set(15, 15, 15);
+              Turtle.rotateY(Math.PI / 3);
+
+              // Enable shadows for the Turtle object
+              Turtle.castShadow = true;
+
+              scene.add(Turtle);
             },
             function (xhr) {
-              console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Bola_R");
+              console.log((xhr.loaded / xhr.total) * 100 + "% loaded, TURTLE");
             },
             function (error) {
-              console.log("An error happened,Bola_R");
+              console.log("An error happened, Turtle");
             }
           );
         }
-        //Bola Verde
+        // TORTUGA 2
         {
-          const bolGTextura = textureLoader.load(
-            "./Modelos/BOLA_G/bolaG_2_UV.png"
+          const turtTextura = textureLoader.load(
+            "./Modelos/TURTLE/TURTLE_UV.png"
           );
           loader.load(
-            "./Modelos/BOLA_R/bola.obj",
-            function (Bola_Grn) {
-              const materialBolaG = new THREE.MeshBasicMaterial({
-                map: bolGTextura,
+            "./Modelos/TURTLE/TURTLE.obj",
+            function (Turtle) {
+              const materialTurtle = new THREE.MeshBasicMaterial({
+                map: turtTextura,
               });
-              materialBolaG.castShadow = true;
-              Bola_Grn.traverse(function (child) {
+              materialTurtle.castShadow = true;
+              Turtle.traverse(function (child) {
                 if (child instanceof THREE.Mesh) {
-                  child.material = materialBolaG;
+                  child.material = materialTurtle;
                 }
               });
-              Bola_Grn.position.set(35, 0, -78);
-              Bola_Grn.scale.set(15, 15, 15);
-              scene.add(Bola_Grn);
+              Turtle.position.set(-70, 0, 30);
+              Turtle.scale.set(15, 15, 15);
+              Turtle.rotateY(Math.PI);
+
+              // Enable shadows for the Turtle object
+              Turtle.castShadow = true;
+
+              scene.add(Turtle);
             },
             function (xhr) {
-              console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Bola_G");
+              console.log((xhr.loaded / xhr.total) * 100 + "% loaded, TURTLE");
             },
             function (error) {
-              console.log("An error happened,Bola_G");
+              console.log("An error happened, Turtle");
+            }
+          );
+        }       
+        //TORTUGA 3
+        {
+          const turtTextura = textureLoader.load(
+            "./Modelos/TURTLE/TURTLE_UV.png"
+          );
+          loader.load(
+            "./Modelos/TURTLE/TURTLE.obj",
+            function (Turtle) {
+              const materialTurtle = new THREE.MeshBasicMaterial({
+                map: turtTextura,
+              });
+              materialTurtle.castShadow = true;
+              Turtle.traverse(function (child) {
+                if (child instanceof THREE.Mesh) {
+                  child.material = materialTurtle;
+                }
+              });
+              Turtle.position.set(35, 0, -78);
+              Turtle.scale.set(15, 15, 15);
+              Turtle.rotateY(-Math.PI / 2);
+
+              // Enable shadows for the Turtle object
+              Turtle.castShadow = true;
+
+              scene.add(Turtle);
+            },
+            function (xhr) {
+              console.log((xhr.loaded / xhr.total) * 100 + "% loaded, TURTLE");
+            },
+            function (error) {
+              console.log("An error happened, Turtle");
             }
           );
         }
-        //Tiburon
+        //Cocodrilo
         {
-          const sharkTexture = textureLoader.load(
-            "./Modelos/SHARK/shart_UV.png"
+          const crocTexture = textureLoader.load(
+            "./Modelos/CROC/CROC_UV.png"
           );
           loader.load(
-            "./Modelos/SHARK/shark.obj",
-            function (Shark) {
-              const sharkMat = new THREE.MeshBasicMaterial({
-                map: sharkTexture,
+            "./Modelos/CROC/CROCODILE.obj",
+            function (Croc) {
+              const crocMat = new THREE.MeshBasicMaterial({
+                map: crocTexture,
               });
-              sharkMat.castShadow = true;
-              Shark.traverse(function (child) {
+              crocMat.castShadow = true;
+              Croc.traverse(function (child) {
                 if (child instanceof THREE.Mesh) {
-                  child.material = sharkMat;
+                  child.material = crocMat;
                 }
               });
 
-              Shark.position.set(-40, 5, -90);
-              Shark.scale.set(15, 15, 15);
-              Shark.rotateY(Math.PI / 3);
-              scene.add(Shark);
+              Croc.position.set(-40, 5, -90);
+              Croc.scale.set(15, 15, 15);
+              Croc.rotateY(Math.PI / 3);
+              scene.add(Croc);
             },
             function (xhr) {
-              console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Shark");
+              console.log((xhr.loaded / xhr.total) * 100 + "% loaded,Croc");
             },
             function (error) {
-              console.log("An error happened,Shark");
+              console.log("An error happened,Croc");
             }
           );
         }
-        //Bandera J1
+        //Bandera J1NO TOCAR
         {
           const bandera1Text = textureLoader.load(
             "./Modelos/BANDERA_R/Bandera_Y_UV.png"
@@ -580,7 +617,7 @@
             }
           );
         }
-        //Bandera J2
+        //Bandera J2    NO TOCAR
         {
           const bandera2Text = textureLoader.load(
             "./Modelos/BANDERA_R/Bandera_R_UV.png"
@@ -637,7 +674,7 @@
               keys1.right = true;
               break;
 
-            case 80: //p
+              case 80: //p
               console.log("Pausa ", pausa);
               break;
 
@@ -873,7 +910,7 @@
             }
           }
         }
-        
+
         function iniciarTemporizador() {
           temporizador = setInterval(function () {
             tiempoRestante--;
@@ -954,6 +991,7 @@
             console.log("La bandera amarilla esta en posesion del equipo rojo");
             flag1followsDuck2 = true;
           }
+
           //Colision PATO AMARILLO con BASE AMARILLA
           if (duck1BB.intersectsBox(goalJ1BB) && bandera2Captured) {
             bandera2Captured = false;
@@ -968,6 +1006,7 @@
             flag2followsDuck1 = false;
             resetFlagPos(bandera2object, flag2Originpos);
           }
+
           //Colision PATO ROJO CON BASE ROJA
           if (duck2BB.intersectsBox(goalJ2BB) && bandera1Captured) {
             bandera1Captured = false;
@@ -982,9 +1021,11 @@
             flag1followsDuck2 = false;
             resetFlagPos(bandera1object, flag1Originpos);
           }
+
           if (flag1followsDuck2) {
             followDuck(bandera1object, duck2object);
           }
+
           if (flag2followsDuck1) {
             followDuck(bandera2object, duck1object);
           }
@@ -1190,7 +1231,6 @@
 
         requestAnimationFrame(render);
       }
-
       main();
     </script>
   </body>
