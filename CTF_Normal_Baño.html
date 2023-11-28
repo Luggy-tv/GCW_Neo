@@ -49,18 +49,19 @@
       <div id="view3" tabindex="3"></div>
     </div>
 
-  <div id="PopupFinal" style="display: none;">
-    <div class="finalJuego">
-      <div id="textoFinal">
-        <h3 class="centered">Game Over</h3>
-        <h1>Jugador 1</h1>
-        <h1>Jugador 2</h1>
-      </div>
-      <div id="botonFinal">
-        <a href="index.html"><button class="salirFinal">Salir</button></a>
+    <div id="PopupFinal" style="display: none">
+      <div class="finalJuego">
+        <div id="textoFinal">
+          <h3 class="centered">Game Over</h3>
+          <h1>Jugador 1: <span id="puntosJ1"></span></h1>
+          <h1>Jugador 2: <span id="puntosJ2"></span></h1>
+          <h1>Ganador: <span id="ganador"></span></h1>
+        </div>
+        <div id="botonFinal">
+          <a href="index.html"><button class="salirFinal">Salir</button></a>
+        </div>
       </div>
     </div>
-  </div> 
 
     <div id="Popup" style="display: none">
       <div class="pausamenu">
@@ -1070,21 +1071,17 @@
           }
         }
 
+        let msg;
+
         function printWinner() {
           if (puntosJ1 > puntosJ2) {
-            console.log(
-              "Fin del juego. Tiempo agotado.\nEL EQUIPO AMARILLO HA GANADO!"
-            );
+            msg = "¡AMARILLO HA GANADO!";
           }
           if (puntosJ2 > puntosJ1) {
-            console.log(
-              "Fin del juego. Tiempo agotado.\nEL EQUIPO ROJO HA GANADO!"
-            );
+            msg = "¡ROJO HA GANADO!";
           }
           if (puntosJ1 == puntosJ2) {
-            console.log(
-              "Fin del juego. Tiempo agotado.\nLOS EQUIPOS HAN EMPATADO!"
-            );
+            msg = "¡EMPATE!";
           }
         }
 
@@ -1097,6 +1094,10 @@
             temporizador = undefined;
             canMove = false;
             printWinner();
+            // Asignar valores a los elementos HTML
+            document.getElementById("puntosJ1").innerText = puntosJ1;
+            document.getElementById("puntosJ2").innerText = puntosJ2;
+            document.getElementById("ganador").innerText = msg;
             document.getElementById("PopupFinal").style.display = "block";
           }
         }
