@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="inicio.css">
+    <title>Cuack Game | Lobby </title>
+    <link rel="icon" href="Modelos/small-duck.svg">
+</head>
+<body id="lobby">
+    <audio autoplay>
+        <source src="Club Penguin - Pizza Parlor Theme (Charlie's Here) [FULL High Quality].mp3" type="audio/mpeg">
+    </audio>
+    <div class="lobby">
+        <div class="lobbyDiv"> <!--DIV2-->
+            <section id="mapa">
+                <h1 class="lobbyText">Seleccion de mapa</h1>
+                <div>
+                    <div class="mapa">
+                        <button class="imgBtn" id="mar" type="submit">
+                        <img src="Imagenes/mar.jpeg" alt="mar">
+                        </button>
+                    </div>
+
+                    <div class="mapa">
+                        <button class="imgBtn" id="pantano" type="submit">
+                        <img src="Imagenes/pantano.jpeg" alt="pantano">
+                        </button>
+                    </div>
+
+                    <div class="mapa">
+                        <button class="imgBtn" id="tina" type="submit">
+                        <img src="Imagenes/tina.jpeg" alt="tina">
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="botonComenzar">
+                <button class="botonComenzar">COMENZAR PARTIDA</button>
+                <a href="index.html"><button class="salirLobby">Regresar a inicio</button></a>
+            </section>
+    
+        </div>
+    
+        <div class="lobbyDiv"> <!--DIV1-->
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+            <section id="modo">
+                <h1 class="lobbyText">Modo de juego</h1>
+                <button class="botonModo" id="single" type="button">Un jugador</button>
+                <button class="botonModo" id="multi" type="button">Dos jugadores</button>
+
+            </section>
+
+            <section id="dificultad">
+                <h1 class="lobbyText">Dificultad (Dos jugadores)</h1>
+                <button class="botonDificultad" disabled id="normal" type="button">Normal</button>
+                <button class="botonDificultad" disabled id="hyper" type="button">Hyper</button>
+            </section>
+            
+        </div>
+    </div>    
+
+    <script> //ACTIVAR BOTONES DE MAPA
+        $('.imgBtn').click(function(e) {
+        $('.imgBtn').removeClass('active');
+        $(this).addClass('active');
+        });
+    </script>
+
+    <script> //ACTIVAR BOTONES DE MODO DE JUEGO
+        $('.botonModo').click(function(e) {
+        $('.botonModo').removeClass('active');
+        $(this).addClass('active');
+        });
+    </script>
+
+    <script> //ACTIVAR BOTONES DE DIFICULTAD
+        $('.botonDificultad').click(function(e) {
+        $('.botonDificultad').removeClass('active');
+        $(this).addClass('active');
+        });
+    </script>
+
+    <script> //OCULTAR SECCIÓN DIFICULTAD
+        document.getElementById("multi").onclick = function() {
+            var botonDif = document.getElementsByClassName("botonDificultad");
+            $('.botonDificultad').removeAttr("disabled");
+        };
+
+        document.getElementById("single").onclick = function() {
+            //console.log("caca");
+            var botonDif = document.getElementsByClassName("botonDificultad");
+            $('.botonDificultad').prop("disabled", true);
+            $('.botonDificultad').removeClass('active');
+        };
+    </script>
+
+
+<!-- Add this script at the end of your HTML body section -->
+<script>
+    // Function to concatenate selected buttons and redirect
+    function concatenateAndRedirect() {
+        // Get the concatenated value of selected buttons
+        var concatenatedValue = $('.active').map(function() {
+            return this.id; // Assuming the button IDs are meaningful
+        }).get().join('_'); // Use '_' as a separator, you can change it as needed
+            console.log(concatenatedValue)
+        // Redirect to another page based on the concatenated value
+
+        //SINGLE
+        if (concatenatedValue == "tina_single") {
+            window.location.href = "SNF_Baño.html";
+        } 
+        if (concatenatedValue == "pantano_single") {
+            window.location.href = "SNF_Pantano.html";
+        } 
+        if (concatenatedValue == "mar_single") {
+            window.location.href = "SNF_Mar.html";
+        } 
+
+
+        //MULTI NORMAL
+        if (concatenatedValue == "tina_multi_normal") {
+            window.location.href = "CTF_Normal_Baño.html";
+        } 
+        if (concatenatedValue == "pantano_multi_normal") {
+            window.location.href = "CTF_Normal_Pantano.html";
+        }
+        if (concatenatedValue == "mar_multi_normal") {
+            window.location.href = "CTF_Normal_Mar.html";
+        }
+
+        //MULTI HYPER
+        if (concatenatedValue == "tina_multi_hyper") {
+            window.location.href = "CTF_Hyper_Baño.html";
+        }
+        if (concatenatedValue == "pantano_multi_hyper") {
+            window.location.href = "CTF_Hyper_Pantano.html";
+        }
+        if (concatenatedValue == "mar_multi_hyper") {
+            window.location.href = "CTF_Hyper_Mar.html";
+        }
+
+    }
+
+    // Modify the click event on the "COMENZAR PARTIDA" button to call the new function
+    $('.botonComenzar').click(function() {
+        concatenateAndRedirect();
+    });
+</script>
+
+
+</body>
+</html>
