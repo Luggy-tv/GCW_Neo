@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cuack Game | SNF Singleplayer</title>
     <link rel="icon" href="Modelos/small-duck.svg" />
+    <link rel="stylesheet" href="inicio.css" />
     <style>
       html,
       body {
@@ -27,6 +28,40 @@
     </audio>
 
     <canvas id="c"></canvas>
+
+
+    <div id="PopupFinal" style="display: none;">
+      <div class="finalJuego">
+        <div id="textoFinal">
+          <h3 class="centered">Game Over</h3>
+          <h1>Puntaje</h1>
+          <input type="text" class="nombreJugador" placeholder="Escribe tu nombre...">
+        </div>
+        <div id="botonFinal">
+          <a href="index.html"><button class="salirFinal">Enviar y salir</button></a>
+        </div>
+      </div>
+    </div> 
+
+    <script>
+      function regresarPopup() {
+        document.getElementById("Popup").style.display = "none";
+      }
+    </script>
+
+
+    <div id="Popup" style="display: none">
+      <div class="pausamenu">
+        <h3>Pausa</h3>
+        <div class="botones">
+          <!--<a href=""><button>Ajustes</button></a>-->
+          <button onclick="regresarPopup()">Regresar</button>
+          <a href="index.html"
+            ><button class="salir">Salir del juego</button></a
+          >
+        </div>
+      </div>
+    </div>
 
     <script type="module">
       import * as THREE from "./Modules/three.module.js";
@@ -498,6 +533,10 @@
               keys1.right = false;
               break;
 
+              case 80: // p
+              document.getElementById("Popup").style.display = "block";
+              break;
+
             //Arrow Key Up
             case 38:
               keys2.forward = false;
@@ -775,6 +814,7 @@
             clearInterval(temporizador);
             temporizador = undefined;
             canMove = false;
+            document.getElementById("PopupFinal").style.display = "block";
           }
         }
 
