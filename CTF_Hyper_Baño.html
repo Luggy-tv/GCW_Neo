@@ -86,19 +86,22 @@
           new THREE.Vector3(130, 10, 0.5)
         );
 
-        let cajaMorada;
-        let cajaVerde;
-        let cajaGris;
+        let caja1;
+        let caja2;
+        let caja3;
 
-        let cajaMoradaBB;
-        let cajaVerdeBB;
-        let cajaGrisBB;
+        let caja1BB; //Esta caja es la boundingBox de la caja 1
+        let caja2BB; //Esta caja es la boundingBox de la caja 2
+        let caja3BB; //Esta caja es la boundingBox de la caja 3
 
-        let posicionCaja1;
-        let posicionCaja2;
-        let posicionCaja3;
+        let posicionIniCaja1 = new THREE.Vector3(94, 1.5, -88);
+        let posicionFinCaja1 = new THREE.Vector3(11, 1.5, -30);
 
-        let pausa;
+        let posicionIniCaja2 = new THREE.Vector3(-67, 1.5, -16);
+        let posicionFinCaja2 = new THREE.Vector3(10, 1.5, 74);
+
+        let posicionIniCaja3 = new THREE.Vector3(39, 1.5, 37);
+        let posicionFinCaja3 = new THREE.Vector3(102, 1.5, -28);
 
         const loader = new OBJLoader();
         const textureLoader = new THREE.TextureLoader();
@@ -276,60 +279,27 @@
         }
         //Modelo de Item
         {
-          const materialMorado = new THREE.MeshBasicMaterial({
-            color: 0x800080,
+          const materialRojo = new THREE.MeshBasicMaterial({
+            color: "red",
           });
-          const materialVerde = new THREE.MeshBasicMaterial({
-            color: 0x00ff00,
-          });
-          const materialGris = new THREE.MeshBasicMaterial({ color: 0x808080 });
 
           const geometriaCaja = new THREE.BoxGeometry(4, 4, 4);
 
-          cajaMorada = new THREE.Mesh(geometriaCaja, materialMorado);
-          cajaVerde = new THREE.Mesh(geometriaCaja, materialVerde);
-          cajaGris = new THREE.Mesh(geometriaCaja, materialGris);
+          caja1 = new THREE.Mesh(geometriaCaja, materialRojo);
+          caja2 = new THREE.Mesh(geometriaCaja, materialRojo);
+          caja3 = new THREE.Mesh(geometriaCaja, materialRojo);
 
-          const posicionesDisponibles = [
-            new THREE.Vector3(76, 2, -80),
-            new THREE.Vector3(49, 2, 21),
-            new THREE.Vector3(-70, 2, 78),
-          ];
+          caja1.position.copy(posicionIniCaja1);
+          caja2.position.copy(posicionIniCaja2);
+          caja3.position.copy(posicionIniCaja3);
 
-          function obtenerPosicionAleatoria(ocupadas) {
-            const posicionesLibres = posicionesDisponibles.filter(
-              (pos) => !ocupadas.some((ocupada) => pos.equals(ocupada))
-            );
+          caja1BB = new THREE.Box3().setFromObject(caja1);
+          caja2BB = new THREE.Box3().setFromObject(caja2);
+          caja3BB = new THREE.Box3().setFromObject(caja3);
 
-            if (posicionesLibres.length > 0) {
-              const posicionSeleccionada =
-                posicionesLibres[
-                  Math.floor(Math.random() * posicionesLibres.length)
-                ];
-              return posicionSeleccionada;
-            } else {
-              return null;
-            }
-          }
-
-          posicionCaja1 = obtenerPosicionAleatoria([]);
-          posicionCaja2 = obtenerPosicionAleatoria([posicionCaja1]);
-          posicionCaja3 = obtenerPosicionAleatoria([
-            posicionCaja1,
-            posicionCaja2,
-          ]);
-
-          cajaMorada.position.copy(posicionCaja1);
-          cajaVerde.position.copy(posicionCaja2);
-          cajaGris.position.copy(posicionCaja3);
-
-          cajaMoradaBB = new THREE.Box3().setFromObject(cajaMorada);
-          cajaVerdeBB = new THREE.Box3().setFromObject(cajaVerde);
-          cajaGrisBB = new THREE.Box3().setFromObject(cajaGris);
-
-          scene.add(cajaMorada);
-          scene.add(cajaVerde);
-          scene.add(cajaGris);
+          scene.add(caja1);
+          scene.add(caja2);
+          scene.add(caja3);
         }
 
         //Bañera
@@ -645,7 +615,7 @@
               break;
 
             case 80: //p
-              console.log("Pausa ", pausa);
+              console.log("localizacion del pato1  ", duck1object.position);
               break;
 
             //Arrow Key Up
@@ -794,13 +764,13 @@
 
         let cajasrespawn = 0;
 
-        cajaMorada.name = "cajaMorada";
-        cajaVerde.name = "cajaVerde";
-        cajaGris.name = "cajaGris";
+        caja1.name = "caja1";
+        caja2.name = "caja2";
+        caja3.name = "caja3";
 
-        let MBoxStatus = true;
-        let VBoxStatus = true;
-        let GBoxStatus = true;
+        let Box1Status = true;
+        let Box2Status = true;
+        let Box3Status = true;
 
         const nrmlAccel = 3000;
         const fastAccel = 5000;
@@ -852,7 +822,6 @@
         }
 
         function slowEffectTimer() {
-          console.log(slowTick);
           if (slowEffect) {
             if (slowTick >= 10) {
               duck1Accel = slowDuck === 1 ? resetAccel(duck1Accel) : duck1Accel;
@@ -867,7 +836,6 @@
         }
 
         function fastEffectTimer() {
-          console.log(fastTick);
           if (fastEffect) {
             if (fastTick >= 20) {
               duck1Accel = fastDuck === 1 ? resetAccel(duck1Accel) : duck1Accel;
@@ -881,53 +849,57 @@
           }
         }
 
+        function boxRespawn() {
+          if (cajasrespawn >= 30) {
+            resetBox();
+            cajasrespawn = 0;
+          } else {
+            cajasrespawn++;
+          }
+        }
+
         function iniciarTemporizador() {
           temporizador = setInterval(function () {
             tiempoRestante--;
 
             slowEffectTimer();
             fastEffectTimer();
-
-            if (cajasrespawn >= 30) {
-              resetBox();
-              cajasrespawn = 0;
-            } else {
-              cajasrespawn++;
-            }
+            boxRespawn();
           }, 1000);
         }
 
-        function moveBox(box, flag) {
-          if (box.name == "cajaMorada" && MBoxStatus) {
-            cajaMorada.position.set(300, 0, 300);
-            cajaMoradaBB.setFromObject(cajaMorada);
-            MBoxStatus = false;
+        function moveBox(box) {
+          if (box.name == "caja1" && Box1Status) {
+            caja1.position.set(300, 0, 300);
+            caja1BB.setFromObject(caja1);
+            Box1Status = false;
           }
-          if (box.name == "cajaVerde" && VBoxStatus) {
-            cajaVerde.position.set(300, 0, 300);
-            cajaVerdeBB.setFromObject(cajaVerde);
-            VBoxStatus = false;
+          if (box.name == "caja2" && Box2Status) {
+            caja2.position.set(300, 0, 300);
+            caja2BB.setFromObject(caja2);
+            Box2Status = false;
           }
-          if (box.name == "cajaGris" && GBoxStatus) {
-            cajaGris.position.set(300, 0, 300);
-            cajaGrisBB.setFromObject(cajaGris);
-            GBoxStatus = false;
+          if (box.name == "caja3" && Box3Status) {
+            caja3.position.set(300, 0, 300);
+            caja3BB.setFromObject(caja3);
+            Box3Status = false;
           }
         }
 
         function resetBox() {
           console.log("Se reiniciaron las cajas");
 
-          VBoxStatus = true;
-          GBoxStatus = true;
-          MBoxStatus = true;
+          Box1Status = true;
+          Box2Status = true;
+          Box3Status = true;
 
-          cajaMorada.position.copy(posicionCaja1);
-          cajaVerde.position.copy(posicionCaja2);
-          cajaGris.position.copy(posicionCaja3);
-          cajaMoradaBB.setFromObject(cajaMorada);
-          cajaVerdeBB.setFromObject(cajaVerde);
-          cajaGrisBB.setFromObject(cajaGris);
+          caja1.position.copy(posicionIniCaja1);
+          caja2.position.copy(posicionIniCaja2);
+          caja3.position.copy(posicionIniCaja3);
+
+          caja1BB.setFromObject(caja1);
+          caja2BB.setFromObject(caja2);
+          caja3BB.setFromObject(caja3);
         }
 
         function formatTime(tiempoSegundos) {
@@ -995,41 +967,41 @@
           if (flag2followsDuck1) {
             followDuck(bandera2object, duck1object);
           }
-          //PATO AMARILLO ITEM MORADO
-          if (duck1BB.intersectsBox(cajaMoradaBB)) {
-            console.log("El equipo amarillo obtuvo el punto extra!");
-            moveBox(cajaMorada, MBoxStatus);
-            puntosJ1++;
+          //PATO AMARILLO CAJA1
+          if (duck1BB.intersectsBox(caja1BB)) {
+            console.log("Punto disminuido para el equipo Amarillo!");
+            moveBox(caja1);
+            puntosJ1--;
           }
-          //PATO AMARILLO ITEM VERDE
-          if (duck1BB.intersectsBox(cajaVerdeBB)) {
-            console.log("Power up para el equipo Amarillo");
-            moveBox(cajaVerde, VBoxStatus);
-            duck1Accel = fastTarget(duck1Accel, 1);
+          //PATO AMARILLO CAJA2
+          if (duck1BB.intersectsBox(caja2BB)) {
+            console.log("Punto disminuido para el equipo Amarillo!");
+            moveBox(caja2);
+            puntosJ1--;
           }
-          //PATO AMARILLO ITEM GRIS
-          if (duck1BB.intersectsBox(cajaGrisBB)) {
-            console.log("Desventaja para el equipo Rojo");
-            moveBox(cajaGris, GBoxStatus);
-            duck2Accel = slowTarget(duck2Accel, 2);
+          //PATO AMARILLO CAJA3
+          if (duck1BB.intersectsBox(caja3BB)) {
+            console.log("Punto disminuido para el equipo Amarillo!");
+            moveBox(caja3);
+            puntosJ1--;
           }
-          //PATO ROJO ITEM MORADO
-          if (duck2BB.intersectsBox(cajaMoradaBB)) {
-            console.log("El equipo rojo obtuvo el punto extra!");
-            moveBox(cajaMorada, MBoxStatus);
-            puntosJ2++;
+          //PATO AMARILLO CAJA1
+          if (duck2BB.intersectsBox(caja1BB)) {
+            console.log("Punto disminuido para el equipo Rojo!");
+            moveBox(caja1);
+            puntosJ2--;
           }
-          //PATO ROJO ITEM VERDE
-          if (duck2BB.intersectsBox(cajaVerdeBB)) {
-            console.log("Power up para el equipo Rojo");
-            moveBox(cajaVerde, VBoxStatus);
-            duck2Accel = fastTarget(duck2Accel, 2);
+          //PATO AMARILLO CAJA2
+          if (duck2BB.intersectsBox(caja2BB)) {
+            console.log("Punto disminuido para el equipo Rojo!");
+            moveBox(caja2);
+            puntosJ2--;
           }
-          //PATO ROJO ITEM GRIS
-          if (duck2BB.intersectsBox(cajaGrisBB)) {
-            console.log("Desventaja para el equipo Amarillo");
-            moveBox(cajaGris, GBoxStatus);
-            duck1Accel = slowTarget(duck1Accel, 1);
+          //PATO AMARILLO CAJA3
+          if (duck2BB.intersectsBox(caja3BB)) {
+            console.log("Punto disminuido para el equipo Rojo!");
+            moveBox(caja3);
+            puntosJ2--;
           }
         }
 
@@ -1119,11 +1091,63 @@
           camera.lookAt(duck.position);
         }
 
-        function girarItems() {
+        function girarCajas() {
           let intervalo = 0.1;
-          cajaMorada.rotation.y += intervalo;
-          cajaVerde.rotation.y += intervalo;
-          cajaGris.rotation.y -= intervalo / 2;
+          caja1.rotation.y += intervalo;
+          caja2.rotation.y += intervalo;
+          caja3.rotation.y += intervalo;
+        }
+
+        let tiempo = 0;
+        const velCajas = 0.05;
+
+        function animarCajas() {
+          tiempo += velCajas;
+
+          // Mueve la caja1
+          if (Box1Status) {
+            caja1.position.x = THREE.MathUtils.lerp(
+              posicionIniCaja1.x,
+              posicionFinCaja1.x,
+              (Math.sin(tiempo) + 1) / 2
+            );
+            caja1.position.z = THREE.MathUtils.lerp(
+              posicionIniCaja1.z,
+              posicionFinCaja1.z,
+              (Math.sin(tiempo) + 1) / 2
+            );
+
+            caja1BB.setFromObject(caja1);
+          }
+
+          // Mueve la caja2
+          if (Box2Status) {
+            caja2.position.x = THREE.MathUtils.lerp(
+              posicionIniCaja2.x,
+              posicionFinCaja2.x,
+              (Math.sin(tiempo) + 1) / 2
+            );
+            caja2.position.z = THREE.MathUtils.lerp(
+              posicionIniCaja2.z,
+              posicionFinCaja2.z,
+              (Math.sin(tiempo) + 1) / 2
+            );
+            caja2BB.setFromObject(caja2);
+          }
+
+          //Mueve la caja3
+          if(Box3Status)
+          caja3.position.x = THREE.MathUtils.lerp(
+            posicionIniCaja3.x,
+            posicionFinCaja3.x,
+            (Math.sin(tiempo) + 1) / 2
+          );
+          caja3.position.z = THREE.MathUtils.lerp(
+            posicionIniCaja3.z,
+            posicionFinCaja3.z,
+            (Math.sin(tiempo) + 1) / 2
+          );
+          caja3BB.setFromObject(caja3);
         }
 
         //Funcion principal de renderizado-------------------------
@@ -1133,7 +1157,8 @@
           // turn on the scissor
           renderer.setScissorTest(true);
 
-          girarItems();
+          animarCajas();
+          girarCajas();
 
           // render the original view
           {
@@ -1194,7 +1219,6 @@
 
           requestAnimationFrame(render);
         }
-
         requestAnimationFrame(render);
       }
 
@@ -1202,22 +1226,3 @@
     </script>
   </body>
 </html>
-
-    <div id="Popup" style="display: none">
-      <div class="pausamenu">
-        <h3>Pausa</h3>
-        <div class="botones">
-          <!--<a href=""><button>Ajustes</button></a>-->
-          <button onclick = "regresarPopup()">Regresar</button>
-          <a href="index.html"><button class="salir">Salir del juegoñ</button></a>
-        </div>
-      </div>
-    </div>
-    <script>
-      function regresarPopup() { 
-      document.getElementById("Popup").style.display = "none";
-      }
-    </script>
-            case 80: // p
-              document.getElementById("Popup").style.display = "block";
-              break;
