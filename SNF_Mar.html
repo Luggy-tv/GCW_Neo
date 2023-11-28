@@ -29,26 +29,28 @@
 
     <canvas id="c"></canvas>
 
-
-    <div id="PopupFinal" style="display: none;">
+    <div id="PopupFinal" style="display: none">
       <div class="finalJuego">
         <div id="textoFinal">
           <h3 class="centered">Game Over</h3>
-          <h1>Puntaje</h1>
-          <input type="text" class="nombreJugador" placeholder="Escribe tu nombre...">
+          <h1>Puntaje final: <span id="puntosJ1"></span></h1>
+          <input type="hidden" id="points" />
+          <input
+            type="text"
+            id="nombreJ"
+            class="nombreJugador"
+            placeholder="Escribe tu nombre..."
+          />
         </div>
         <div id="botonFinal">
-          <a href="index.html"><button class="salirFinal">Enviar y salir</button></a>
+          <button onclick="mandarInfo()" class="salirFinal">
+            Enviar y salir
+          </button>
         </div>
       </div>
-    </div> 
+    </div>
 
-    <script>
-      function regresarPopup() {
-        document.getElementById("Popup").style.display = "none";
-      }
-    </script>
-
+    
 
     <div id="Popup" style="display: none">
       <div class="pausamenu">
@@ -62,6 +64,47 @@
         </div>
       </div>
     </div>
+
+    <script>
+      function regresarPopup() {
+        document.getElementById("Popup").style.display = "none";
+      }
+      function mandarInfo() {
+        nombreJugador = document.getElementById("nombreJ").value;
+        puntuacion = document.getElementById("points").value;
+
+        var formData = new FormData();
+        formData.append("jugador", nombreJugador);
+        formData.append("puntuacion", puntuacion);
+
+        var xhr = new XMLHttpRequest();
+
+        xhr.open("POST", "./php/send_puntuaciones.php", true);
+        
+        console.log(formData);
+
+        xhr.onload = function () {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            var jsonResponse = JSON.parse(xhr.responseText);
+
+            if (jsonResponse.success) {
+              console.log("Operación exitosa:", jsonResponse.message);
+              window.location.href = 'index.html';
+            } else {
+              console.error("Error en la operación:", jsonResponse.message);
+            }
+          } else {
+            console.error("Error en la solicitud AJAX:", xhr.statusText);
+          }
+        };
+
+        xhr.onerror = function () {
+          console.error("Error en la solicitud AJAX.");
+        };
+
+        xhr.send(formData);
+      }
+    </script>
 
     <script type="module">
       import * as THREE from "./Modules/three.module.js";
@@ -93,16 +136,13 @@
         camera.position.set(0, 30, -165);
         const cameraHelper = new THREE.CameraHelper(camera);
 
-       
-
         //Escena
         const scene = new THREE.Scene();
         scene.background = new THREE.Color("#34495E");
 
-         // const controls3 = new OrbitControls(camera3, view3Elem);
+        // const controls3 = new OrbitControls(camera3, view3Elem);
         // controls3.target.set(0, 5, 0);
         // controls3.update();
-
 
         //Luces
         {
@@ -533,7 +573,7 @@
               keys1.right = false;
               break;
 
-              case 80: // p
+            case 80: // p
               document.getElementById("Popup").style.display = "block";
               break;
 
@@ -814,6 +854,8 @@
             clearInterval(temporizador);
             temporizador = undefined;
             canMove = false;
+            document.getElementById("points").value = puntosJ1;
+            document.getElementById("puntosJ1").innerText = puntosJ1;
             document.getElementById("PopupFinal").style.display = "block";
           }
         }
