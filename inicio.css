@@ -482,3 +482,70 @@ table {
   font-family: Arial, Helvetica, sans-serif;
   font-size: medium;
 }
+
+.finalJuego{
+  background-color: #219ebc;
+  height: 50%;
+  width: 30%;
+
+  border-style: solid;
+  border-width: 5px;
+  border-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 0 0 5px #023047;
+
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  padding-top:0;
+  padding-bottom:0;
+  padding-left: 3%;
+  padding-right: 3%;
+}
+
+.centered{
+  margin-top: 8%;
+  text-align: center;
+}
+
+.salirFinal{
+  text-align: center;
+
+  width: 60%;
+  height: 60%;
+  background-color: var(--orange);
+  box-shadow: 0 0 0 5px #3c2b16;
+
+  color: white;
+  font-family: "bubbleboddy", sans-serif;
+  font-size: 30px;
+  text-shadow: 0 0 5px #023047;
+
+  border-radius: 20px;
+  border-style: solid;
+  border-width: 5px;
+  border-color: rgb(255, 255, 255);
+
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 20%;
+
+  margin-top:0;
+
+  cursor: pointer;
+}
+
+#textoFinal{
+  width: 100%;
+  height: 60%;
+}
+
+#botonFinal{
+  width: 100%;
+  height: 30%;
+}
+
+

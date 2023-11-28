@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cuack Game | CTF Muliplayer</title>
     <link rel="icon" href="Modelos/small-duck.svg" />
+    <link rel="stylesheet" href="inicio.css" />
     <style>
       html,
       body {
@@ -47,6 +48,44 @@
       <div id="view1" tabindex="1"></div>
       <div id="view3" tabindex="3"></div>
     </div>
+
+
+    <div id="PopupFinal" style="display: none;">
+      <div class="finalJuego">
+        <div id="textoFinal">
+          <h3 class="centered">Game Over</h3>
+          <h1>Jugador 1</h1>
+          <h1>Jugador 2</h1>
+        </div>
+        <div id="botonFinal">
+          <a href="index.html"><button class="salirFinal">Salir</button></a>
+        </div>
+      </div>
+    </div> 
+
+
+    <div id="Popup" style="display: none">
+      <div class="pausamenu">
+        <h3>Pausa</h3>
+        <div class="botones">
+          <!--<a href=""><button>Ajustes</button></a>-->
+          <button onclick="regresarPopup()">Regresar</button>
+          <a href="index.html"
+            ><button class="salir">Salir del juego</button></a
+          >
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function regresarPopup() {
+        document.getElementById("Popup").style.display = "none";
+      }
+    </script>
+
+
+
+
     <script type="module">
       import * as THREE from "./Modules/three.module.js";
       import { OrbitControls } from "./Modules/OrbitControls.js";
@@ -769,6 +808,10 @@
               keys1.right = false;
               break;
 
+              case 80: // p
+              document.getElementById("Popup").style.display = "block";
+              break;
+
             //Arrow Key Up
             case 38:
               keys2.forward = false;
@@ -1148,6 +1191,7 @@
             temporizador = undefined;
             canMove = false;
             printWinner();
+            document.getElementById("PopupFinal").style.display = "block";
           }
         }
 
