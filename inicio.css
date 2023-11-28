@@ -126,15 +126,15 @@ button {
   border-color: #219ebc;
   box-shadow: 0 0 0 5px #023047;
 
-  text-align: center;
-
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  height: 500px;
-  margin-top: -250px; /* half of you height */
-  width: 400px;
-  margin-left: -200px; /* half of you width */
+    text-align: center;
+    
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    height: 400px;
+    margin-top: -200px; /* half of you height */
+    width: 400px;
+    margin-left: -200px; /* half of you width */
 }
 
 .ajustes {
@@ -369,22 +369,22 @@ section {
 }
 
 .mapa img {
-  border-radius: 10px;
-  height: 100%;
-  width: 100%;
-  object-fit: cover;
+    border-radius: 5px;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
 }
 
-.imgBtn {
-  border-radius: 10px;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  background-color: var(--mid-blue);
-  border-width: 0px;
-  border-color: rgb(255, 255, 255);
-  box-shadow: 0 0 0 5px #ffffff;
+.imgBtn{
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: var(--mid-blue);
+    border-width: 5px;
+    border-color: #ffffff;
+    box-shadow: 0 0 0 5px #023047;
 }
 .active {
   background-color: #ffb703;
